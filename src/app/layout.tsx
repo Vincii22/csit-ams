@@ -3,8 +3,9 @@ import { Hanken_Grotesk } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { PopupProvider } from "@/shared/contexts/popup-context";
 import { Toaster } from "@/components/ui/sonner";
-import Popup from "@/components/popup";
+import Popup from "@/shared/components/popup";
 import "./globals.css";
+import ConfirmPopup from "@/shared/components/confirm-popup";
 
 const hankenGrotesk = Hanken_Grotesk({
   variable: "--font-hanken-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
           <PopupProvider>
             {children}
             <Popup />
+            <ConfirmPopup />
             <Toaster theme="dark" />
           </PopupProvider>
         </ThemeProvider>

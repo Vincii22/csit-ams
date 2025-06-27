@@ -10,7 +10,7 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   if (!session && req.nextUrl.pathname.startsWith("/app")) {
-    console.log("bitch ain't logged in");
+    console.log("check for supabase session");
 
     const redirectUrl = new URL("/sign-in", req.url);
     redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname);

@@ -1,5 +1,5 @@
 export type ConfirmData = {
   type: string;
-  action: any;
+  action: () => Promise<void>;
   loading?: boolean;
 };
