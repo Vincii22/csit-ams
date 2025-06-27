@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/schemas/auth.schema";
@@ -20,9 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TbBrandGoogle } from "react-icons/tb";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import Loader from "@/components/ui/loader";
-import { Eye, EyeOff } from "lucide-react";
+import { PasswordInput } from "../password";
 
 export function SignInForm({
   className,
@@ -36,6 +34,7 @@ export function SignInForm({
     defaultValues: {
       email: "",
       password: "",
+      remember: false,
     },
   });
 
@@ -43,7 +42,8 @@ export function SignInForm({
     await new Promise(() => {
       setTimeout(() => {
         router.push("/dashboard");
-      }, 1000);
+        console.log(values);
+      }, 100);
     });
   }
 
@@ -61,7 +61,7 @@ export function SignInForm({
           </p>
         </div>
         <div className="grid gap-6">
-          <Button variant="outline" size="lg" className="w-full">
+          <Button variant="outline" type="button" size="lg" className="w-full">
             <TbBrandGoogle className="text-muted-foreground" />
             Continue with Google
           </Button>
@@ -83,48 +83,27 @@ export function SignInForm({
               </FormItem>
             )}
           />
+          <PasswordInput
+            form={form}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+            showForgotLink={true}
+          />
           <FormField
             control={form.control}
-            name="password"
+            name="remember"
             render={({ field }) => (
-              <FormItem>
-                <div className="flex items-center">
-                  <FormLabel>Password</FormLabel>
-                  <Link
-                    href="/forgot-password"
-                    className="ml-auto text-sm text-muted-foreground"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
-                <div className="flex gap-2">
-                  <FormControl>
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="●●●●●●"
-                      {...field}
-                    />
-                  </FormControl>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-full"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? <Eye /> : <EyeOff />}
-                  </Button>
-                </div>
-                <FormMessage />
+              <FormItem className="flex items-center">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>Remember me (only for 3 days)</FormLabel>
               </FormItem>
             )}
           />
-          <div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="remember" />
-              <Label htmlFor="remember">Remember me (only for 3 days)</Label>
-            </div>
-          </div>
           <Button
             type="submit"
             size="lg"

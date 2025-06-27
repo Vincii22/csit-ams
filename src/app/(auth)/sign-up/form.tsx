@@ -28,6 +28,7 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/loader";
+import { PasswordInput } from "../password";
 
 export function SignUpForm({
   className,
@@ -70,7 +71,7 @@ export function SignUpForm({
           </p>
         </div>
         <div className="grid gap-6">
-          <Button variant="outline" size="lg" className="w-full">
+          <Button variant="outline" type="button" size="lg" className="w-full">
             <TbBrandGoogle className="text-muted-foreground" />
             Continue with Google
           </Button>
@@ -161,33 +162,10 @@ export function SignUpForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <div className="flex gap-2">
-                  <FormControl>
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="●●●●●●"
-                      {...field}
-                    />
-                  </FormControl>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-full"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? <Eye /> : <EyeOff />}
-                  </Button>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
+          <PasswordInput
+            form={form}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
           />
           <Button
             type="submit"
