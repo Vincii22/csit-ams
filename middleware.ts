@@ -10,10 +10,16 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   if (!session && req.nextUrl.pathname.startsWith("/app")) {
-    const redirectUrl = new URL("/auth/sign-in", req.url);
+    console.log("bitch ain't logged in");
+
+    const redirectUrl = new URL("/sign-in", req.url);
     redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
   return res;
 }
+
+export const config = {
+  matcher: ["/", "/dashboard/:path*"],
+};
