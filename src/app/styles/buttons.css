@@ -1,0 +1,3 @@
+.primary-btn {
+  @apply bg-blue-800 border border-blue-600 text-white hover:bg-blue-700 hover:border-blue-500 transition;
+}

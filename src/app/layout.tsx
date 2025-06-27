@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Hanken_Grotesk } from "next/font/google";
+import { ThemeProvider } from "next-themes";
+import { PopupProvider } from "@/shared/contexts/popup-context";
+import { Toaster } from "@/components/ui/sonner";
+import Popup from "@/components/popup";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const hankenGrotesk = Hanken_Grotesk({
+  variable: "--font-hanken-sans",
   subsets: ["latin"],
 });
 
@@ -23,11 +22,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${hankenGrotesk.variable} antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <PopupProvider>
+            {children}
+            <Popup />
+            <Toaster theme="dark" />
+          </PopupProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
