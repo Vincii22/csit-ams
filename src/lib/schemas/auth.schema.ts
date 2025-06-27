@@ -1,16 +1,19 @@
 import { z } from "zod";
 
-const YearLevel = {
-  None: "",
-  First: "1",
-  Second: "2",
-  Third: "3",
-  Fourth: "4",
-} as const;
+const YearLevel = z.enum(["1", "2", "3", "4"], {
+  errorMap: () => ({ message: "Year level is required" }),
+});
 
-const years = z.nativeEnum(YearLevel);
+const Course = z.enum(["BSIT", "BSCS"], {
+  errorMap: () => ({ message: "Course is required" }),
+});
 
-const courses = z.enum(["", "BSIT", "BSCS"]);
+const SchoolId = z
+  .string()
+  .min(1, "School ID is required")
+  .max(8, "Must not exceed 8 characters")
+  .regex(/^0/, "Must start with zero")
+  .regex(/^\d+$/, "Must not contain letters");
 
 export const loginSchema = z.object({
   email: z
@@ -26,7 +29,24 @@ export const registerSchema = z.object({
     .email({ message: "Invalid email address" })
     .min(1, "Email is required"),
   password: z.string().min(1, "Password is required"),
-  schoolId: z.string().min(1, "School ID is required"),
-  yearLevel: years,
-  course: courses,
+  schoolId: SchoolId,
+  yearLevel: YearLevel,
+  course: Course,
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .email({ message: "Invalid email address" })
+    .min(1, "Email is required"),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().min(1, "Password is required"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });

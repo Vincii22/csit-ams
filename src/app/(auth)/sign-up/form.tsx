@@ -25,12 +25,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/ui/loader";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -38,13 +42,18 @@ export function SignUpForm({
       email: "",
       password: "",
       schoolId: "",
-      yearLevel: "",
-      course: "",
+      yearLevel: undefined,
+      course: undefined,
     },
   });
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    // wee
+    await new Promise(() => {
+      setTimeout(() => {
+        router.push("/sign-in");
+        toast.success("Created account successfully. You can now login.");
+      }, 1000);
+    });
   }
 
   return (
@@ -103,22 +112,22 @@ export function SignUpForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Year level</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select year level" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">First year</SelectItem>
-                        <SelectItem value="2">Second year</SelectItem>
-                        <SelectItem value="3">Third year</SelectItem>
-                        <SelectItem value="4">Fourth year</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="1">First year</SelectItem>
+                      <SelectItem value="2">Second year</SelectItem>
+                      <SelectItem value="3">Third year</SelectItem>
+                      <SelectItem value="4">Fourth year</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -130,26 +139,24 @@ export function SignUpForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Course</FormLabel>
-                <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select course" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="BSIT">
-                          Bachelor of Science Information Technology
-                        </SelectItem>
-                        <SelectItem value="BSCS">
-                          Bachelor of Science in Computer Science
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select course" />
+                    </SelectTrigger>
                   </FormControl>
-                </FormControl>
+                  <SelectContent>
+                    <SelectItem value="BSIT">
+                      Bachelor of Science Information Technology
+                    </SelectItem>
+                    <SelectItem value="BSCS">
+                      Bachelor of Science in Computer Science
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -160,30 +167,35 @@ export function SignUpForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <div className="flex gap-2">
+                <div className="flex gap-2">
+                  <FormControl>
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="●●●●●●"
                       {...field}
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-full"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    >
-                      {showPassword ? <Eye /> : <EyeOff />}
-                    </Button>
-                  </div>
-                </FormControl>
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-full"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <Eye /> : <EyeOff />}
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" size="lg" className="primary-btn w-full">
-            Sign up
+          <Button
+            type="submit"
+            size="lg"
+            className="primary-btn w-full"
+            disabled={form.formState.isSubmitting ? true : false}
+          >
+            {form.formState.isSubmitting ? <Loader /> : "Sign up"}
           </Button>
         </div>
         <div className="text-center text-sm">

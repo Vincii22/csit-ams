@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/schemas/auth.schema";
 import { useForm } from "react-hook-form";
@@ -18,11 +21,16 @@ import { Input } from "@/components/ui/input";
 import { TbBrandGoogle } from "react-icons/tb";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import Loader from "@/components/ui/loader";
+import { Eye, EyeOff } from "lucide-react";
 
 export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -32,7 +40,11 @@ export function SignInForm({
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    // wee
+    await new Promise(() => {
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1000);
+    });
   }
 
   return (
@@ -85,9 +97,24 @@ export function SignInForm({
                     Forgot your password?
                   </Link>
                 </div>
-                <FormControl>
-                  <Input type="password" placeholder="●●●●●●" {...field} />
-                </FormControl>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="●●●●●●"
+                      {...field}
+                    />
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-full"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <Eye /> : <EyeOff />}
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -98,8 +125,13 @@ export function SignInForm({
               <Label htmlFor="remember">Remember me (only for 3 days)</Label>
             </div>
           </div>
-          <Button type="submit" size="lg" className="primary-btn w-full">
-            Sign in
+          <Button
+            type="submit"
+            size="lg"
+            className="primary-btn w-full"
+            disabled={form.formState.isSubmitting ? true : false}
+          >
+            {form.formState.isSubmitting ? <Loader /> : "Sign in"}
           </Button>
         </div>
         <div className="text-center text-sm">
