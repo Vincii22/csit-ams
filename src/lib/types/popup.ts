@@ -1,5 +1,7 @@
-export type ConfirmData = {
-  type: string;
-  action: () => Promise<void>;
+export type ConfirmActionData = {
+  title: string;
+  description?: string;
+  action?: () => Promise<void>;
+  confirmLabel?: string;
   loading?: boolean;
 };

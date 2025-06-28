@@ -1,4 +1,4 @@
-import { ConfirmData } from "@/lib/types";
+import type { ConfirmActionData } from "@/lib/types";
 import { ReactNode, useState } from "react";
 
 export function usePopupState() {
@@ -7,7 +7,9 @@ export function usePopupState() {
   const [content, setContent] = useState<ReactNode>(null);
 
   const [showConfirm, setShowConfirm] = useState(false);
-  const [confirmData, setConfirmData] = useState<ConfirmData | null>(null);
+  const [confirmData, setConfirmData] = useState<ConfirmActionData | null>(
+    null,
+  );
 
   const openPopup = (title: string, content: ReactNode) => {
     setTitle(title);
@@ -15,8 +17,8 @@ export function usePopupState() {
     setIsOpen(true);
   };
 
-  const openConfirmPopup = (confirmData: ConfirmData) => {
-    setConfirmData(confirmData);
+  const openConfirmPopup = (confirmActionData: ConfirmActionData) => {
+    setConfirmData(confirmActionData);
     setShowConfirm(true);
   };
 

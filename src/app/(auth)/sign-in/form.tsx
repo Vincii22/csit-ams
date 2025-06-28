@@ -21,6 +21,8 @@ import { TbBrandGoogle } from "react-icons/tb";
 import { Checkbox } from "@/components/ui/checkbox";
 import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
+import { usePopup } from "@/shared/contexts/popup-context";
+import { ConfirmActionData } from "@/lib/types";
 
 export function SignInForm({
   className,
@@ -28,6 +30,48 @@ export function SignInForm({
 }: React.ComponentProps<"form">) {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+
+  const { openPopup, closePopup, openConfirmPopup, closeConfirmPopup } =
+    usePopup();
+
+  const confirmActionData: ConfirmActionData = {
+    title: "Restore Duolingo streak?",
+    description:
+      "Are you sure you want to restore your Duolingo streak? This action is irreversible!",
+    confirmLabel: "Restore",
+  };
+
+  const openTestPopup = () =>
+    openPopup(
+      "",
+      <div className="grid gap-5">
+        <div>
+          <h3 className="text-xl font-semibold">Duolingo Streak</h3>
+          <p className="text-muted-foreground">Written by Stephanie Arteta</p>
+        </div>
+        <p>
+          There was once a time, where I had a streak of 59 days in Duolingo.
+          <br />
+          But then, I was too worked up and focused on something else.
+          <br />
+          I saw it all unfold -- how my Duolingo streak faded before my eyes..
+          <br />
+          So I swore on that very day, I would never fumble on Duolingo.
+        </p>
+        <div className="btn-container justify-end">
+          <Button variant="ghost" type="button" onClick={() => closePopup()}>
+            Close
+          </Button>
+          <Button
+            variant="destructive"
+            type="button"
+            onClick={() => openConfirmPopup(confirmActionData)}
+          >
+            Restore streak
+          </Button>
+        </div>
+      </div>,
+    );
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -61,7 +105,13 @@ export function SignInForm({
           </p>
         </div>
         <div className="grid gap-6">
-          <Button variant="outline" type="button" size="lg" className="w-full">
+          <Button
+            variant="outline"
+            type="button"
+            size="lg"
+            className="w-full"
+            onClick={() => openTestPopup()}
+          >
             <TbBrandGoogle className="text-muted-foreground" />
             Continue with Google
           </Button>
