@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useAuthStore } from "@/lib/state/auth.store";
 
