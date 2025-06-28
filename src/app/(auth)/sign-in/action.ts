@@ -12,6 +12,7 @@ const mockUser: User = {
   course: "BSIT",
   yearLevel: 3,
   schoolId: "0769696",
+  position: "External Vice President",
 };
 
 export async function mockSignIn(values: z.infer<typeof loginSchema>) {
