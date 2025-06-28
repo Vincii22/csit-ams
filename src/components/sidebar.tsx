@@ -42,7 +42,7 @@ export default function Sidebar({ role }: SidebarProps) {
                     item={item}
                     pathname={pathname}
                   />
-                ),
+                )
               )}
             </div>
             {groupIndex !== navGroups.length - 1 && (
@@ -90,7 +90,7 @@ function SidebarCollapsible({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const isActive = pathname.startsWith(
-    `/dashboard/${item.title?.toLowerCase()}`,
+    `/dashboard/${item.title?.toLowerCase()}`
   );
 
   return (
@@ -100,7 +100,7 @@ function SidebarCollapsible({
         className={clsx(
           navLinkBase,
           "justify-between w-full",
-          isActive && "bg-border",
+          isActive && "bg-border"
         )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
@@ -134,7 +134,7 @@ function SidebarCollapsible({
                   href={child.href ?? "#"}
                   className={clsx(
                     "pl-1 py-0.5 text-muted-foreground hover:text-white transition",
-                    isActive && "text-white font-medium",
+                    isActive && "text-white font-medium"
                   )}
                 >
                   {child.title}

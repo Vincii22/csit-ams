@@ -1,5 +1,11 @@
 "use client";
 
+import { SidebarLayout } from "../sidebar-layout";
+
 export default function AdminDashboard() {
-  return <div>This is the admin view</div>;
+  return (
+    <SidebarLayout>
+      <div>This is the admin view</div>;
+    </SidebarLayout>
+  );
 }
