@@ -25,9 +25,8 @@ import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
 import { usePopup } from "@/shared/contexts/popup-context";
 import { ConfirmActionData } from "@/lib/types";
-import { signIn } from "./action";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { mockSignIn } from "./action";
+import { toast } from "sonner";
 
 export function SignInForm({
   className,
@@ -36,8 +35,7 @@ export function SignInForm({
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const { openPopup, closePopup, openConfirmPopup, closeConfirmPopup } =
-    usePopup();
+  const { openPopup, closePopup, openConfirmPopup } = usePopup();
 
   const confirmActionData: ConfirmActionData = {
     title: "Restore Duolingo streak?",
@@ -88,10 +86,12 @@ export function SignInForm({
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    const { error } = await signIn(values);
+    const result = await mockSignIn(values);
 
-    if (error) {
-      form.setError("root", { message: error.message });
+    try {
+      result.success ? router.push("/dashboard") : toast.error(result.error);
+    } catch (err) {
+      toast.error("Something went wrong");
     }
   }
 
@@ -125,7 +125,7 @@ export function SignInForm({
               or
             </span>
           </div>
-
+          {/* 
           {form.formState.errors.root && (
             <Alert variant="destructive">
               <AlertCircle />
@@ -133,7 +133,7 @@ export function SignInForm({
                 {form.formState.errors.root.message}
               </AlertDescription>
             </Alert>
-          )}
+          )} */}
 
           <FormField
             control={form.control}

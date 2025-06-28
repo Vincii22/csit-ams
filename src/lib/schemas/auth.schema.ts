@@ -1,10 +1,12 @@
 import { z } from "zod";
 
-const YearLevel = z.enum(["1", "2", "3", "4"], {
+import { Courses, YearLevels } from "../constants";
+
+const YearLevel = z.enum(YearLevels.map(String) as [string, ...string[]], {
   errorMap: () => ({ message: "Year level is required" }),
 });
 
-const Course = z.enum(["BSIT", "BSCS"], {
+const Course = z.enum(Courses, {
   errorMap: () => ({ message: "Course is required" }),
 });
 
