@@ -23,6 +23,8 @@ import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
 import { usePopup } from "@/shared/contexts/popup-context";
 import { ConfirmActionData } from "@/lib/types";
+import { mockSignIn } from "./action";
+import { toast } from "sonner";
 
 export function SignInForm({
   className,
@@ -31,8 +33,7 @@ export function SignInForm({
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const { openPopup, closePopup, openConfirmPopup, closeConfirmPopup } =
-    usePopup();
+  const { openPopup, closePopup, openConfirmPopup } = usePopup();
 
   const confirmActionData: ConfirmActionData = {
     title: "Restore Duolingo streak?",
@@ -83,12 +84,13 @@ export function SignInForm({
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    await new Promise(() => {
-      setTimeout(() => {
-        router.push("/dashboard");
-        console.log(values);
-      }, 100);
-    });
+    const result = await mockSignIn(values);
+
+    try {
+      result.success ? router.push("/dashboard") : toast.error(result.error);
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
   }
 
   return (
