@@ -25,7 +25,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
   if (!user) return;
 
   return (
-    <div className="grid grid-rows-[fit-content(100%)_1fr] grid-cols-[14rem_1fr] min-h-svh overflow-hidden">
+    <div className="grid grid-rows-[fit-content(100%)_1fr] grid-cols-[fit-content(100%)_1fr] min-h-svh overflow-hidden">
       <header className="flex justify-between items-center border-b border-border col-span-2 h-14 px-4">
         <Link
           href="/dashboard"
@@ -169,7 +169,7 @@ function HelpButton() {
           </div>
         </div>
         <Separator className="my-2" />
-        <div className="px-3 pb-4 grid gap-4">
+        <div className="px-3 pb-3 grid gap-4">
           <h3 className="font-semibold">Facebook pages</h3>
           <p className="text-sm text-muted-foreground">
             We can always refer to the official page or from the official school

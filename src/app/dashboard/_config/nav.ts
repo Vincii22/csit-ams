@@ -94,9 +94,9 @@ export const NAV_ITEMS: Record<Role, NavItem[][]> = {
         ],
       },
       {
-        title: "Archives",
+        title: "Archive",
         icon: "archive",
-        href: "/dashboard/archives",
+        href: "/dashboard/archive",
       },
       {
         title: "Logs",

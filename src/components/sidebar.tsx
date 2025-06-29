@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { getNavItemsForRole, type NavItem } from "@/app/dashboard/_config/nav";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
-import { ChevronRight, PanelRightDashed } from "lucide-react";
+import { ChevronRight, ChevronsDownUp, PanelRightDashed } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 
@@ -22,9 +22,62 @@ export default function Sidebar({ role }: SidebarProps) {
   const navGroups = getNavItemsForRole(role);
   const pathname = usePathname();
 
+  const [collapsedItems, setCollapsedItems] = useState<Record<string, boolean>>(
+    {},
+  );
+  const [expandedSidebar, setExpandedSidebar] = useState(true);
+
+  const handleToggleAll = () => {
+    const isAnyOpen = Object.values(collapsedItems).some((open) => open);
+    const newState: Record<string, boolean> = {};
+
+    navGroups.forEach((group) =>
+      group.forEach((item) => {
+        if (item.children && item.title) {
+          newState[item.title] = !isAnyOpen;
+        }
+      }),
+    );
+    setCollapsedItems(newState);
+  };
+
   return (
-    <aside className="flex flex-col justify-between border-r border-border">
+    <aside
+      className={clsx(
+        "flex flex-col justify-between border-r border-border",
+        expandedSidebar ? "w-[15rem]" : "w-[56px] overflow-hidden",
+      )}
+    >
       <nav className="grid">
+        <div className="flex items-center px-3 pt-3 p-1">
+          {expandedSidebar && (
+            <h2 className="font-semibold text-muted-foreground">
+              caenar was here
+            </h2>
+          )}
+          <div
+            className={clsx(
+              !expandedSidebar && "flex flex-col items-center justify-center",
+            )}
+          >
+            <Button
+              variant="ghost"
+              className="!p-3.5 h-[10px] w-[10px] text-muted-foreground"
+              title="Toggle all items"
+              onClick={handleToggleAll}
+            >
+              <ChevronsDownUp className="size-4.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              className="!p-3.5 h-[10px] w-[10px] text-muted-foreground"
+              title="Collapse sidebar"
+              onClick={() => setExpandedSidebar(!expandedSidebar)}
+            >
+              <PanelRightDashed className="size-4.5" />
+            </Button>
+          </div>
+        </div>
         {navGroups.map((group, groupIndex) => (
           <Fragment key={`group-${groupIndex}`}>
             <div className="grid gap-1 p-3">
@@ -34,12 +87,21 @@ export default function Sidebar({ role }: SidebarProps) {
                     key={item.title ?? itemIndex}
                     item={item}
                     pathname={pathname}
+                    collapsed={expandedSidebar}
+                    isOpen={collapsedItems[item.title ?? ""] ?? false}
+                    onToggle={() =>
+                      setCollapsedItems((prev) => ({
+                        ...prev,
+                        [item.title ?? ""]: !prev[item.title ?? ""],
+                      }))
+                    }
                   />
                 ) : (
                   <SidebarLink
                     key={item.title ?? itemIndex}
                     item={item}
                     pathname={pathname}
+                    collapsed={expandedSidebar}
                   />
                 ),
               )}
@@ -50,12 +112,6 @@ export default function Sidebar({ role }: SidebarProps) {
           </Fragment>
         ))}
       </nav>
-      <Button
-        variant="ghost"
-        className="!p-3.5 h-[10px] w-[10px] self-end m-2 text-muted-foreground"
-      >
-        <PanelRightDashed />
-      </Button>
     </aside>
   );
 }
@@ -63,7 +119,15 @@ export default function Sidebar({ role }: SidebarProps) {
 const navLinkBase =
   "flex items-center gap-3 py-1.5 px-2 rounded-md cursor-pointer hover:bg-border hover:text-white transition";
 
-function SidebarLink({ item, pathname }: { item: NavItem; pathname: string }) {
+function SidebarLink({
+  item,
+  pathname,
+  collapsed,
+}: {
+  item: NavItem;
+  pathname: string;
+  collapsed: boolean;
+}) {
   const isActive = item.href === pathname;
 
   return (
@@ -74,7 +138,7 @@ function SidebarLink({ item, pathname }: { item: NavItem; pathname: string }) {
       {item.icon && (
         <DynamicIcon name={item.icon as IconName} size={IconSizes.SMALL} />
       )}
-      {item.title}
+      {collapsed && item.title}
     </Link>
   );
 }
@@ -82,11 +146,16 @@ function SidebarLink({ item, pathname }: { item: NavItem; pathname: string }) {
 function SidebarCollapsible({
   item,
   pathname,
+  collapsed,
+  isOpen,
+  onToggle,
 }: {
   item: NavItem;
   pathname: string;
+  collapsed: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const isActive = pathname.startsWith(
     `/dashboard/${item.title?.toLowerCase()}`,
   );
@@ -100,20 +169,22 @@ function SidebarCollapsible({
           "justify-between w-full",
           isActive && "bg-border",
         )}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={onToggle}
       >
         <div className="flex items-center gap-3">
           {item.icon && (
             <DynamicIcon name={item.icon as IconName} size={IconSizes.SMALL} />
           )}
-          {item.title}
+          {collapsed && item.title}
         </div>
-        <motion.div
-          animate={{ rotate: isOpen ? 90 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <ChevronRight size={16} />
-        </motion.div>
+        {collapsed && (
+          <motion.div
+            animate={{ rotate: isOpen ? 90 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronRight size={16} />
+          </motion.div>
+        )}
       </button>
       <AnimatePresence>
         {isOpen && (
