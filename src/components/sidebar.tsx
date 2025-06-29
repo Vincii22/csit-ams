@@ -27,52 +27,79 @@ export default function Sidebar({ role }: SidebarProps) {
   );
   const [expandedSidebar, setExpandedSidebar] = useState(true);
 
-  const handleToggleAll = () => {
-    const isAnyOpen = Object.values(collapsedItems).some((open) => open);
-    const newState: Record<string, boolean> = {};
-
+  const setAllCollapsedItems = (state: boolean) => {
+    const result: Record<string, boolean> = {};
     navGroups.forEach((group) =>
       group.forEach((item) => {
         if (item.children && item.title) {
-          newState[item.title] = !isAnyOpen;
+          result[item.title] = state;
         }
       }),
     );
-    setCollapsedItems(newState);
+    setCollapsedItems(result);
+  };
+
+  const handleToggleAll = () => {
+    const isAnyOpen = Object.values(collapsedItems).some((open) => open);
+    setAllCollapsedItems(!isAnyOpen);
+  };
+
+  const collapseSidebar = () => {
+    const isCollapsing = expandedSidebar;
+    setExpandedSidebar(!expandedSidebar);
+
+    if (isCollapsing) {
+      setAllCollapsedItems(false);
+    }
   };
 
   return (
-    <aside
+    <motion.aside
       className={clsx(
         "flex flex-col justify-between border-r border-border",
         expandedSidebar ? "w-[15rem]" : "w-[56px] overflow-hidden",
       )}
+      animate={{ width: expandedSidebar ? "15rem" : "56px" }}
     >
       <nav className="grid">
-        <div className="flex items-center px-3 pt-3 p-1">
-          {expandedSidebar && (
-            <h2 className="font-semibold text-muted-foreground">
-              caenar was here
-            </h2>
+        <div
+          className={clsx(
+            "flex items-center px-3 pt-3 p-1",
+            expandedSidebar ? "justify-between" : "justify-center",
           )}
-          <div
-            className={clsx(
-              !expandedSidebar && "flex flex-col items-center justify-center",
+        >
+          <AnimatePresence>
+            {expandedSidebar && (
+              <motion.div
+                className="w-[140px] overflow-hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h2 className="font-semibold text-muted-foreground whitespace-nowrap">
+                  caenar was here
+                </h2>
+              </motion.div>
             )}
-          >
-            <Button
-              variant="ghost"
-              className="!p-3.5 h-[10px] w-[10px] text-muted-foreground"
-              title="Toggle all items"
-              onClick={handleToggleAll}
-            >
-              <ChevronsDownUp className="size-4.5" />
-            </Button>
+          </AnimatePresence>
+
+          <div className="flex items-center gap-1">
+            {expandedSidebar && (
+              <Button
+                variant="ghost"
+                className="!p-3.5 h-[10px] w-[10px] text-muted-foreground"
+                title="Toggle all items"
+                onClick={handleToggleAll}
+              >
+                <ChevronsDownUp className="size-4.5" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               className="!p-3.5 h-[10px] w-[10px] text-muted-foreground"
               title="Collapse sidebar"
-              onClick={() => setExpandedSidebar(!expandedSidebar)}
+              onClick={() => collapseSidebar()}
             >
               <PanelRightDashed className="size-4.5" />
             </Button>
@@ -89,12 +116,13 @@ export default function Sidebar({ role }: SidebarProps) {
                     pathname={pathname}
                     collapsed={expandedSidebar}
                     isOpen={collapsedItems[item.title ?? ""] ?? false}
-                    onToggle={() =>
+                    onToggle={() => {
+                      if (!expandedSidebar) setExpandedSidebar(true);
                       setCollapsedItems((prev) => ({
                         ...prev,
                         [item.title ?? ""]: !prev[item.title ?? ""],
-                      }))
-                    }
+                      }));
+                    }}
                   />
                 ) : (
                   <SidebarLink
@@ -112,12 +140,12 @@ export default function Sidebar({ role }: SidebarProps) {
           </Fragment>
         ))}
       </nav>
-    </aside>
+    </motion.aside>
   );
 }
 
 const navLinkBase =
-  "flex items-center gap-3 py-1.5 px-2 rounded-md cursor-pointer hover:bg-border hover:text-white transition";
+  "h-9 flex items-center gap-3 px-2 rounded-md cursor-pointer hover:bg-border hover:text-white transition";
 
 function SidebarLink({
   item,
@@ -134,6 +162,7 @@ function SidebarLink({
     <Link
       href={item.href ?? "#"}
       className={clsx(navLinkBase, isActive && "bg-border text-white")}
+      title={item.title}
     >
       {item.icon && (
         <DynamicIcon name={item.icon as IconName} size={IconSizes.SMALL} />
@@ -170,6 +199,7 @@ function SidebarCollapsible({
           isActive && "bg-border",
         )}
         onClick={onToggle}
+        title={item.title}
       >
         <div className="flex items-center gap-3">
           {item.icon && (
