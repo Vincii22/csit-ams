@@ -1,38 +1,18 @@
+"use server";
+
 import { loginSchema } from "@/lib/schemas/auth.schema";
-import { useAuthStore } from "@/lib/state/auth.store";
-import { User } from "@/lib/types";
+import { supabase } from "@/lib/supabase";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
-const mockUser: User = {
-  id: 777,
-  fullName: "Caenar Arteta",
-  email: "rah@gmail.com",
-  password: "123",
-  role: "officer",
-  course: "BSIT",
-  yearLevel: 3,
-  schoolId: "0769696",
-  position: "External Vice President",
-};
+export async function signIn(credentials: z.infer<typeof loginSchema>) {
+  const { error } = await supabase.auth.signInWithPassword(credentials);
 
-export async function mockSignIn(values: z.infer<typeof loginSchema>) {
-  return new Promise<{ success: boolean; error?: string }>((resolve) => {
-    setTimeout(() => {
-      if (
-        values.email === mockUser.email &&
-        values.password === mockUser.password
-      ) {
-        const { setUser, setRemember } = useAuthStore.getState();
-        setUser(mockUser);
-        setRemember(values.remember);
+  if (error) {
+    return { success: false, status: 400, error };
+  }
 
-        resolve({ success: true });
-      } else {
-        resolve({
-          success: false,
-          error: "Invalid credentials",
-        });
-      }
-    }, 500);
-  });
+  revalidatePath("/", "layout");
+  redirect("/");
 }
