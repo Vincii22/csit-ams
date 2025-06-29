@@ -4,7 +4,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useState, Fragment } from "react";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion"; // ✅ fix import
+import { motion, AnimatePresence } from "framer-motion";
 
 import { getNavItemsForRole, type NavItem } from "@/app/dashboard/_config/nav";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
@@ -89,12 +89,19 @@ function SidebarCollapsible({
   pathname: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const isActive = pathname.startsWith(
+    `/dashboard/${item.title?.toLowerCase()}`,
+  );
 
   return (
     <div>
       <button
         type="button"
-        className={clsx(navLinkBase, "justify-between w-full")}
+        className={clsx(
+          navLinkBase,
+          "justify-between w-full",
+          isActive && "bg-border",
+        )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <div className="flex items-center gap-3">
@@ -126,7 +133,7 @@ function SidebarCollapsible({
                   key={`nav-child-${index}`}
                   href={child.href ?? "#"}
                   className={clsx(
-                    "pl-1 py-0.5 text-sm text-muted-foreground hover:text-white transition",
+                    "pl-1 py-0.5 text-muted-foreground hover:text-white transition",
                     isActive && "text-white font-medium",
                   )}
                 >
