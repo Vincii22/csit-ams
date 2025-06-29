@@ -3,11 +3,7 @@
 import Link from "next/link";
 import { useAuthStore } from "@/lib/state/auth.store";
 
-import {
-  Inbox,
-  LucideMessageCircleQuestion,
-  MessageCircleCode,
-} from "lucide-react";
+import { CircleHelp, Inbox, MessageCircleCode } from "lucide-react";
 import Sidebar from "@/components/sidebar";
 import { IconSizes } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
@@ -28,17 +24,34 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
           Kumsociety
         </Link>
         <div className="flex gap-2 items-center">
-          <div className="flex gap-1.5">
-            <Button className="rounded-3xl">Feedback</Button>
-            <Button variant="outline" className="rounded-3xl" title="Help">
-              <LucideMessageCircleQuestion />
-            </Button>
+          <Link href="/dashboard/feedback">
             <Button
+              size="sm"
               variant="outline"
-              className="rounded-3xl"
+              className="text-sm rounded-3xl "
+            >
+              Feedback
+            </Button>
+          </Link>
+
+          <div className="border border-border rounded-3xl">
+            <Link href="/dashboard/manual">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-l-3xl rounded-r-[0] !pr-1.5"
+                title="Help"
+              >
+                <CircleHelp className="size-5" />
+              </Button>
+            </Link>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="rounded-r-3xl rounded-l-[0] !pl-1.5"
               title="Notifications"
             >
-              <Inbox />
+              <Inbox className="size-5" />
             </Button>
           </div>
           <div>

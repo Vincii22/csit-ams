@@ -57,11 +57,7 @@ export const NAV_ITEMS: Record<Role, NavItem[][]> = {
         title: "Members",
         icon: "users",
         children: [
-          { title: "Overview", href: "/dashboard/members" },
-          {
-            title: "Sections",
-            href: "/dashboard/members/sections",
-          },
+          { title: "Student List", href: "/dashboard/members" },
           {
             title: "Attendance",
             href: "/dashboard/members/attendance",
@@ -76,58 +72,31 @@ export const NAV_ITEMS: Record<Role, NavItem[][]> = {
         title: "Finances",
         icon: "dollar-sign",
         children: [
-          { title: "Overview", href: "/dashboard/finances" },
-          { title: "Collections", href: "/dashboard/finances/collections" },
+          { title: "Summary", href: "/dashboard/finances" },
+          { title: "Income", href: "/dashboard/finances/income" },
           { title: "Expenses", href: "/dashboard/finances/expenses" },
-          { title: "Requests", href: "/dashboard/finances/requests" },
         ],
       },
       {
         title: "Events",
         icon: "calendar",
-        children: [
-          { title: "Upcoming", href: "/dashboard/events" },
-          { title: "Proposals", href: "/dashboard/events/proposals" },
-          { title: "Announcements", href: "/dashboard/events/announcements" },
-        ],
+        href: "/dashboard/events",
       },
     ],
     [
       {
-        title: "Resources",
+        title: "Library",
         icon: "folder",
         children: [
-          { title: "Org Files", href: "/dashboard/files" },
-          { title: "Documentation", href: "/dashboard/docs" },
+          { title: "Files", href: "/dashboard/files" },
           { title: "Media", href: "/dashboard/media" },
+          { title: "Manual", href: "/dashboard/manual" },
         ],
       },
       {
         title: "Archives",
         icon: "archive",
-        children: [
-          {
-            title: "Academic Years",
-            href: "/dashboard/archives/years",
-            icon: "calendar",
-          },
-          {
-            title: "Members",
-            href: "/dashboard/archives/members",
-            icon: "users",
-          },
-          {
-            title: "Events",
-            href: "/dashboard/archives/events",
-            icon: "calendar-clock",
-          },
-          {
-            title: "Finances",
-            href: "/dashboard/archives/finances",
-            icon: "dollar-sign",
-          },
-          { title: "Logs", href: "/dashboard/archives/logs", icon: "scroll" },
-        ],
+        href: "/dashboard/archives",
       },
       {
         title: "Logs",
