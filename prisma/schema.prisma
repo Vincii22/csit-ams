@@ -21,7 +21,7 @@ enum Role {
 }
 
 enum Year {
-  FIRST @map("First-Year Student")
+  FIRST  @map("First-Year Student")
   SECOND @map("Second-Year Student")
   THIRD  @map("Third-Year Student")
   FOURTH @map("Fourth-Year Student")
@@ -43,30 +43,29 @@ enum Position {
 }
 
 model User {
-  id String @id @default(uuid())
-  name String
-  email String @unique
-  password String
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
   verifiedAt DateTime
-  role Role @default(STUDENT)
+  role       Role     @default(STUDENT)
 }
 
 model Course {
-  id String @id @default(uuid())
-  course String
+  id       String    @id @default(uuid())
+  course   String
   students Student[]
 }
 
 model Student {
-  id String @id @default(uuid())
+  id       String @id @default(uuid())
   schoolId String
   courseId String
-  year Year
-  course Course @relation(fields: [courseId], references: [id])
+  year     Year
+  course   Course @relation(fields: [courseId], references: [id])
 }
 
 model Officer {
-  id String @id @default(uuid())
+  id       String   @id @default(uuid())
   position Position
 }
-

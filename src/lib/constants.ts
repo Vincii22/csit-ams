@@ -32,9 +32,3 @@ export enum IconSizes {
   SMALL = 18,
   XS = 16,
 }
-
-export const NAV_ITEMS: Record<Role, NavItem[]> = {
-  admin: [],
-  officer: [],
-  student: [],
-};

@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/lib/state/auth.store";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -14,4 +15,13 @@ export function useAuthSessionCheck() {
       toast.info("Session expired. Please sign in again.");
     }
   }, []);
+}
+
+export function signInWithGoogle() {
+  supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${location.origin}/auth/callback`,
+    },
+  });
 }

@@ -25,6 +25,7 @@ import { PasswordInput } from "../password";
 import { signIn } from "./action";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { signInWithGoogle } from "@/shared/hooks/use-auth";
 
 export function SignInForm({
   className,
@@ -64,7 +65,13 @@ export function SignInForm({
         </div>
 
         <div className="grid gap-6">
-          <Button variant="outline" type="button" size="lg" className="w-full">
+          <Button
+            variant="outline"
+            type="button"
+            size="lg"
+            className="w-full"
+            onClick={() => signInWithGoogle()}
+          >
             <TbBrandGoogle className="text-muted-foreground" />
             Continue with Google
           </Button>

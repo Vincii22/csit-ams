@@ -24,22 +24,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
-import { signup } from "./action";
+import { signUp } from "./action";
+import { signInWithGoogle } from "@/shared/hooks/use-auth";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
       schoolId: "",
@@ -49,7 +48,7 @@ export function SignUpForm({
   });
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    await signup(values);
+    await signUp(values);
   }
 
   return (
@@ -66,7 +65,13 @@ export function SignUpForm({
           </p>
         </div>
         <div className="grid gap-6">
-          <Button variant="outline" type="button" size="lg" className="w-full">
+          <Button
+            variant="outline"
+            type="button"
+            size="lg"
+            className="w-full"
+            onClick={() => signInWithGoogle()}
+          >
             <TbBrandGoogle className="text-muted-foreground" />
             Continue with Google
           </Button>
@@ -75,6 +80,19 @@ export function SignUpForm({
               or
             </span>
           </div>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Full name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Omsim Barabida" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"

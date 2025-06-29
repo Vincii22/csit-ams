@@ -6,10 +6,9 @@ export type Course = (typeof Courses)[number];
 export type Position = (typeof Positions)[keyof typeof Positions];
 
 type BaseUser = {
-  id: number;
+  id: string;
   fullName: string;
   email: string;
-  password: string; // remove later
   course: Course;
   yearLevel: YearLevel;
   schoolId?: string;

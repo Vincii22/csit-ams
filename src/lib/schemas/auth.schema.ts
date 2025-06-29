@@ -27,6 +27,11 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Full name is required")
+    .regex(/^\D*$/, "Must not contain any digits")
+    .regex(/^[a-zA-Z\s]*$/, "Must not contain special characters"),
   email: z
     .string()
     .email({ message: "Invalid email address" })

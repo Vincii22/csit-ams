@@ -8,10 +8,15 @@ export async function middleware(req: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+  console.log("Session: ", session);
 
-  if (!session && req.nextUrl.pathname.startsWith("/app")) {
-    console.log("check for supabase session");
+  const protectedPaths = ["/dashboard"];
 
+  const isProtected = protectedPaths.some((path) =>
+    req.nextUrl.pathname.startsWith(path),
+  );
+
+  if (!session && isProtected) {
     const redirectUrl = new URL("/sign-in", req.url);
     redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
@@ -21,5 +26,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*"],
+  matcher: ["/dashboard/:path*"],
 };

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState, Fragment } from "react";
 import { usePathname } from "next/navigation";
 import { IconSizes } from "@/lib/constants";
-import { Role } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { getNavItemsForRole, type NavItem } from "@/app/dashboard/_config/nav";
@@ -13,13 +12,13 @@ import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { ChevronRight, ChevronsDownUp, PanelRightDashed } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
+import { useAuthStore } from "@/lib/state/auth.store";
 
-type SidebarProps = {
-  role: Role;
-};
+export default function Sidebar() {
+  const { user } = useAuthStore();
+  if (!user) return null;
 
-export default function Sidebar({ role }: SidebarProps) {
-  const navGroups = getNavItemsForRole(role);
+  const navGroups = getNavItemsForRole(user.role);
   const pathname = usePathname();
 
   const [collapsedItems, setCollapsedItems] = useState<Record<string, boolean>>(
@@ -131,7 +130,7 @@ export default function Sidebar({ role }: SidebarProps) {
                     pathname={pathname}
                     collapsed={expandedSidebar}
                   />
-                )
+                ),
               )}
             </div>
             {groupIndex !== navGroups.length - 1 && (
@@ -186,7 +185,7 @@ function SidebarCollapsible({
   onToggle: () => void;
 }) {
   const isActive = pathname.startsWith(
-    `/dashboard/${item.title?.toLowerCase()}`
+    `/dashboard/${item.title?.toLowerCase()}`,
   );
 
   return (
@@ -196,7 +195,7 @@ function SidebarCollapsible({
         className={clsx(
           navLinkBase,
           "justify-between w-full",
-          isActive && "bg-border"
+          isActive && "bg-border",
         )}
         onClick={onToggle}
         title={item.title}
@@ -233,7 +232,7 @@ function SidebarCollapsible({
                   href={child.href ?? "#"}
                   className={clsx(
                     "pl-1 py-0.5 text-muted-foreground hover:text-white transition",
-                    isActive && "text-white font-medium"
+                    isActive && "text-white font-medium",
                   )}
                 >
                   {child.title}
