@@ -1,6 +1,6 @@
 "use client";
 
-import AuthLayout from "../auth-layout";
+import AuthLayout from "@/components/layouts/auth-layout";
 import { ResetPasswordForm } from "./form";
 
 export default function ResetPasswordPage() {

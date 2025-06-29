@@ -1,3 +1,5 @@
+"use client";
+
 import { IconSizes } from "@/lib/constants";
 import { MessageCircleCode } from "lucide-react";
 import Image from "next/image";

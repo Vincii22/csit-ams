@@ -11,16 +11,9 @@ import Loader from "@/components/ui/loader";
 export default function DashboardPage() {
   const { user } = useAuthStore();
 
-  // check if session has expired on load
   useAuthSessionCheck();
 
-  if (!user) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
+  if (!user) return null;
 
   switch (user.role) {
     case "admin":
@@ -29,5 +22,11 @@ export default function DashboardPage() {
       return <OfficerDashboard />;
     case "student":
       return <StudentDashboard />;
+    default:
+      return (
+        <div className="flex h-screen items-center justify-center">
+          <Loader />
+        </div>
+      );
   }
 }

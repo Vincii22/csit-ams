@@ -5,20 +5,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
-import { useAuthStore } from "@/lib/state/auth.store";
-import { useRouter } from "next/navigation";
+import { handleLogout } from "@/lib/auth/handle-logout";
 
 export default function Avatar({ user }: { user: User }) {
-  const router = useRouter();
-  const { clearUser } = useAuthStore();
-
   const initials = user.fullName.split(" ");
   const firstInitial = initials[0].charAt(0);
   const lastInitial = initials[initials.length - 1].charAt(0);
 
-  function logout() {
-    clearUser();
-    router.replace("/");
+  async function logout() {
+    await handleLogout();
   }
 
   return (

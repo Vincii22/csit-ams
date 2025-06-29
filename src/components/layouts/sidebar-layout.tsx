@@ -15,10 +15,14 @@ import Sidebar from "@/components/sidebar";
 import { IconSizes } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import Avatar from "@/components/avatar";
-import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Separator } from "./ui/separator";
-import { Label } from "./ui/label";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
 
 export function SidebarLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAuthStore();
@@ -43,7 +47,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
           <Avatar user={user} />
         </div>
       </header>
-      <Sidebar role={user.role} />
+      <Sidebar />
       <main className="overflow-y-scroll">{children}</main>
     </div>
   );

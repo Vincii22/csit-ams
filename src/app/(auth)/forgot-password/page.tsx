@@ -1,7 +1,7 @@
 "use client";
 
+import AuthLayout from "@/components/layouts/auth-layout";
 import { ForgotPasswordForm } from "./form";
-import AuthLayout from "../auth-layout";
 
 export default function ForgotPasswordPage() {
   const image = {
