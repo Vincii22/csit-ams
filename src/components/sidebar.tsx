@@ -4,6 +4,8 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useState, Fragment } from "react";
 import { usePathname } from "next/navigation";
+import { IconSizes } from "@/lib/constants";
+import { Role } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { getNavItemsForRole, type NavItem } from "@/app/dashboard/_config/nav";
@@ -11,9 +13,6 @@ import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { ChevronRight, PanelRightDashed } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-
-import { IconSizes } from "@/lib/constants";
-import { Role } from "@/lib/types";
 
 type SidebarProps = {
   role: Role;
@@ -51,7 +50,6 @@ export default function Sidebar({ role }: SidebarProps) {
           </Fragment>
         ))}
       </nav>
-
       <Button
         variant="ghost"
         className="!p-3.5 h-[10px] w-[10px] self-end m-2 text-muted-foreground"
@@ -123,7 +121,7 @@ function SidebarCollapsible({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="grid gap-1 ml-4 border-l border-border pl-3 py-1 overflow-hidden"
+            className="text-sm grid gap-1 ml-4 border-l border-border pl-3 py-1 overflow-hidden"
           >
             {item.children?.map((child, index) => {
               const isActive = pathname === child.href;
