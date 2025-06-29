@@ -1,3 +1,6 @@
+import { Role } from "./types";
+import { NavItem } from "./types/nav-item";
+
 export const Semesters = [1, 2] as const;
 
 export const YearLevels = [1, 2, 3, 4] as const;
@@ -29,3 +32,9 @@ export enum IconSizes {
   SMALL = 18,
   XS = 16,
 }
+
+export const NAV_ITEMS: Record<Role, NavItem[]> = {
+  admin: [],
+  officer: [],
+  student: [],
+};

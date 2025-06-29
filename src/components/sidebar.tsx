@@ -131,7 +131,7 @@ export default function Sidebar({ role }: SidebarProps) {
                     pathname={pathname}
                     collapsed={expandedSidebar}
                   />
-                ),
+                )
               )}
             </div>
             {groupIndex !== navGroups.length - 1 && (
@@ -186,7 +186,7 @@ function SidebarCollapsible({
   onToggle: () => void;
 }) {
   const isActive = pathname.startsWith(
-    `/dashboard/${item.title?.toLowerCase()}`,
+    `/dashboard/${item.title?.toLowerCase()}`
   );
 
   return (
@@ -196,7 +196,7 @@ function SidebarCollapsible({
         className={clsx(
           navLinkBase,
           "justify-between w-full",
-          isActive && "bg-border",
+          isActive && "bg-border"
         )}
         onClick={onToggle}
         title={item.title}
@@ -233,7 +233,7 @@ function SidebarCollapsible({
                   href={child.href ?? "#"}
                   className={clsx(
                     "pl-1 py-0.5 text-muted-foreground hover:text-white transition",
-                    isActive && "text-white font-medium",
+                    isActive && "text-white font-medium"
                   )}
                 >
                   {child.title}

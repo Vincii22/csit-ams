@@ -1,0 +1,13 @@
+"use server";
+
+import { registerSchema } from "@/lib/schemas/auth.schema";
+import { supabase } from "@/lib/supabase";
+import { z } from "zod";
+
+export async function signup(data: z.infer<typeof registerSchema>) {
+  const { error } = await supabase.auth.signUp(data);
+
+  if (error) {
+    console.log(error);
+  }
+}
