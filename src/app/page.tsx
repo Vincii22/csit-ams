@@ -1,17 +1,25 @@
-import { redirect } from "next/navigation";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+"use client";
 
-export default async function HomePage() {
-  const supabase = createServerComponentClient({ cookies });
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import Loader from "@/components/ui/loader";
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+export default function HomePage() {
+  const router = useRouter();
 
-  if (session) {
-    redirect("/dashboard");
-  } else {
-    redirect("/sign-in");
+  async function checkSession() {
+    const { data } = await supabase.auth.getUser();
+    data.user ? router.replace("/dashboard") : router.replace("/sign-in");
   }
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <Loader />
+    </div>
+  );
 }

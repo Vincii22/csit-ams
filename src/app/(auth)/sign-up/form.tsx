@@ -27,7 +27,7 @@ import {
 import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
 import { signUp } from "./action";
-import { signInWithGoogle } from "@/shared/hooks/use-auth";
+import { signInWithGoogle } from "@/lib/auth/oauth";
 
 export function SignUpForm({
   className,

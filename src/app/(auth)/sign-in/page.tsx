@@ -2,7 +2,6 @@
 
 import { SignInForm } from "./form";
 import AuthLayout from "../auth-layout";
-import { useAuthStore } from "@/lib/state/auth.store";
 
 export default function SignInPage() {
   const image = {

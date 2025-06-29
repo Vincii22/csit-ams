@@ -176,7 +176,7 @@ function HelpButton() {
             facebook page.
           </p>
           <div className="btn-container">
-            <a href="#">
+            <a href="https://www.facebook.com/CSITSociety" target="_blank">
               <Button
                 variant="outline"
                 size="sm"
@@ -186,7 +186,7 @@ function HelpButton() {
                 <ExternalLink className="size-3.5 text-muted-foreground" />
               </Button>
             </a>
-            <a href="#">
+            <a href="https://www.facebook.com/dwclegazpisvd" target="_blank">
               <Button
                 variant="outline"
                 size="sm"
