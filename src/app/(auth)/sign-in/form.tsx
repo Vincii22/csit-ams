@@ -1,3 +1,5 @@
+"use client";
+
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -23,6 +25,9 @@ import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
 import { usePopup } from "@/shared/contexts/popup-context";
 import { ConfirmActionData } from "@/lib/types";
+import { signIn } from "./action";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export function SignInForm({
   className,
@@ -70,7 +75,7 @@ export function SignInForm({
             Restore streak
           </Button>
         </div>
-      </div>,
+      </div>
     );
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -83,12 +88,11 @@ export function SignInForm({
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    await new Promise(() => {
-      setTimeout(() => {
-        router.push("/dashboard");
-        console.log(values);
-      }, 100);
-    });
+    const { error } = await signIn(values);
+
+    if (error) {
+      form.setError("root", { message: error.message });
+    }
   }
 
   return (
@@ -104,6 +108,7 @@ export function SignInForm({
             Sign in to your account
           </p>
         </div>
+
         <div className="grid gap-6">
           <Button
             variant="outline"
@@ -120,6 +125,16 @@ export function SignInForm({
               or
             </span>
           </div>
+
+          {form.formState.errors.root && (
+            <Alert variant="destructive">
+              <AlertCircle />
+              <AlertDescription>
+                {form.formState.errors.root.message}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <FormField
             control={form.control}
             name="email"

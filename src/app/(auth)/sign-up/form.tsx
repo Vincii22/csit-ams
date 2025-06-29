@@ -25,10 +25,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
+import { signup } from "./action";
 
 export function SignUpForm({
   className,
@@ -49,12 +50,7 @@ export function SignUpForm({
   });
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    await new Promise(() => {
-      setTimeout(() => {
-        router.push("/sign-in");
-        toast.success("Created account successfully. You can now login.");
-      }, 1000);
-    });
+    await signup(values);
   }
 
   return (
