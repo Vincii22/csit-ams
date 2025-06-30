@@ -1,8 +1,11 @@
+"use client";
+
 import { toast } from "sonner";
 import { useAuthStore } from "../state/auth.store";
-import { supabase } from "../supabase";
+import { createClient } from "../supabase/client";
 
 export async function handleLogout() {
+  const supabase = createClient();
   const { clearUser } = useAuthStore.getState();
   const { error } = await supabase.auth.signOut();
 

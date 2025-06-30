@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/lib/state/auth.store";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ export function useAuthSessionCheck() {
 
 export function useRehydrateAuth() {
   const setUser = useAuthStore((state) => state.setUser);
+  const supabase = createClient();
 
   useEffect(() => {
     async function rehydrate() {

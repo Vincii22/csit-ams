@@ -4,7 +4,6 @@ import { z } from "zod";
 import { handleLogout } from "@/lib/auth/handle-logout";
 import { useEffect, useState } from "react";
 import { signInWithGoogle } from "@/lib/auth/oauth";
-import { supabase } from "@/lib/supabase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/schemas/auth.schema";
 import { useForm } from "react-hook-form";
@@ -28,6 +27,7 @@ import { PasswordInput } from "../password";
 import Loader from "@/components/ui/loader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export function SignInForm({
   className,
@@ -37,6 +37,7 @@ export function SignInForm({
   const [showPassword, setShowPassword] = useState(false);
 
   async function checkSession() {
+    const supabase = createClient();
     const { data } = await supabase.auth.getUser();
     data.user && setLoggedIn(true);
   }

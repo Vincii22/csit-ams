@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import Loader from "@/components/ui/loader";
 import { useRehydrateAuth } from "@/shared/hooks/use-auth";
+import { createClient } from "@/lib/supabase/client";
 
 export default function App() {
   const router = useRouter();
@@ -12,6 +12,7 @@ export default function App() {
   useRehydrateAuth();
 
   async function checkSession() {
+    const supabase = createClient();
     const { data } = await supabase.auth.getUser();
     data.user ? router.replace("/dashboard") : router.replace("/sign-in");
   }
