@@ -22,7 +22,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const [collapsedItems, setCollapsedItems] = useState<Record<string, boolean>>(
-    {},
+    {}
   );
   const [expandedSidebar, setExpandedSidebar] = useState(true);
 
@@ -33,7 +33,7 @@ export default function Sidebar() {
         if (item.children && item.title) {
           result[item.title] = state;
         }
-      }),
+      })
     );
     setCollapsedItems(result);
   };
@@ -56,7 +56,7 @@ export default function Sidebar() {
     <motion.aside
       className={clsx(
         "flex flex-col justify-between border-r border-border",
-        expandedSidebar ? "w-[15rem]" : "w-[56px] overflow-hidden",
+        expandedSidebar ? "w-[15rem]" : "w-[56px] overflow-hidden"
       )}
       animate={{ width: expandedSidebar ? "15rem" : "56px" }}
     >
@@ -64,7 +64,7 @@ export default function Sidebar() {
         <div
           className={clsx(
             "flex items-center px-3 pt-3 p-1",
-            expandedSidebar ? "justify-between" : "justify-center",
+            expandedSidebar ? "justify-between" : "justify-center"
           )}
         >
           <AnimatePresence>
@@ -130,7 +130,7 @@ export default function Sidebar() {
                     pathname={pathname}
                     collapsed={expandedSidebar}
                   />
-                ),
+                )
               )}
             </div>
             {groupIndex !== navGroups.length - 1 && (
@@ -185,7 +185,7 @@ function SidebarCollapsible({
   onToggle: () => void;
 }) {
   const isActive = pathname.startsWith(
-    `/dashboard/${item.title?.toLowerCase()}`,
+    `/dashboard/${item.title?.toLowerCase()}`
   );
 
   return (
@@ -195,7 +195,7 @@ function SidebarCollapsible({
         className={clsx(
           navLinkBase,
           "justify-between w-full",
-          isActive && "bg-border",
+          isActive && "bg-border"
         )}
         onClick={onToggle}
         title={item.title}
@@ -232,7 +232,7 @@ function SidebarCollapsible({
                   href={child.href ?? "#"}
                   className={clsx(
                     "pl-1 py-0.5 text-muted-foreground hover:text-white transition",
-                    isActive && "text-white font-medium",
+                    isActive && "text-white font-medium"
                   )}
                 >
                   {child.title}

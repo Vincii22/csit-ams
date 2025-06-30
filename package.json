@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:seed": "ts-node prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "bun prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -30,6 +34,7 @@
     "next": "15.3.2",
     "next-themes": "^0.4.6",
     "prisma": "^6.8.2",
+    "prisma-seeder": "^1.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.58.1",
@@ -42,13 +47,14 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^24.0.7",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "tw-animate-css": "^1.3.0",
-    "typescript": "^5"
+    "typescript": "^5.8.3"
   }
 }

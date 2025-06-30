@@ -15,57 +15,41 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
-  STUDENT
-  OFFICER
-}
-
-enum Year {
-  FIRST  @map("First-Year Student")
-  SECOND @map("Second-Year Student")
-  THIRD  @map("Third-Year Student")
-  FOURTH @map("Fourth-Year Student")
-}
-
-enum Position {
-  PRESIDENT
-  IVP
-  EVP
-  SEC_GEN
-  SEC_ASS
-  TREASURER
-  TREASURER_ASS
-  AUDITOR
-  BS_HAN
-  PRO
-  IT_REP
-  CS_REP
+  ADMIN @map("Admin")
+  STUDENT @map("Student")
+  OFFICER @map("Officer")
 }
 
 model User {
-  id         String   @id @default(uuid())
+  id         String   @id
   name       String
   email      String   @unique
-  password   String
   verifiedAt DateTime
   role       Role     @default(STUDENT)
+  student Student? 
 }
 
 model Course {
   id       String    @id @default(uuid())
   course   String
+  abbreviation String @unique
+  students Student[]
+}
+
+model Position {
+  id String @id @default(uuid())
+  title String
   students Student[]
 }
 
 model Student {
-  id       String @id @default(uuid())
+  id       String @id
   schoolId String
   courseId String
-  year     Year
+  positionId String?
+  year     Int
   course   Course @relation(fields: [courseId], references: [id])
+  position Position? @relation(fields: [positionId], references: [id])
+  user User @relation(fields: [id], references: [id])
 }
 
-model Officer {
-  id       String   @id @default(uuid())
-  position Position
-}

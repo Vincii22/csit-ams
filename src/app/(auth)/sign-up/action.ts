@@ -2,8 +2,6 @@
 
 import { registerSchema } from "@/lib/schemas/auth.schema";
 import { createClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 export async function signUp(data: z.infer<typeof registerSchema>) {
@@ -15,18 +13,17 @@ export async function signUp(data: z.infer<typeof registerSchema>) {
     options: {
       data: {
         name: data.name,
-        role: "student",
+        schoolId: data.schoolId,
+        course: data.course,
+        year: parseInt(data.yearLevel),
+        role: "STUDENT",
       },
     },
   });
 
   if (error) {
-    redirect("/error");
+    return { success: false, status: 400, msg: error.message };
   }
 
-  const redirectedFrom = "sign-up";
-  const url = `/sign-in?redirectedFrom=${encodeURIComponent(redirectedFrom)}`;
-
-  revalidatePath("/");
-  redirect(url);
+  return { success: true, status: 204, msg: "Waiting for email confirmation" };
 }
