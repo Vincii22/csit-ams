@@ -15,7 +15,10 @@ export default function SignInPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const from = params.get("redirectedFrom");
+    const raw = params.get("redirectedFrom");
+
+    if (!raw) return;
+    const from = decodeURIComponent(raw);
 
     if (from) {
       setRedirectedFrom(from);

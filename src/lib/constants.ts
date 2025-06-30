@@ -29,3 +29,41 @@ export enum IconSizes {
   SMALL = 18,
   XS = 16,
 }
+
+export const HTTP_STATUS = {
+  400: {
+    title: "BAD_REQUEST",
+    description: "The server could not understand the request",
+  },
+  401: {
+    title: "UNAUTHORIZED",
+    description: "You must be logged in to access this resource",
+  },
+  403: {
+    title: "FORBIDDEN",
+    description: "You do not have permission to access this",
+  },
+  404: {
+    title: "NOT_FOUND",
+    description: "The requested resource could not be found",
+  },
+  409: {
+    title: "CONFLICT",
+    description: "The request conflicts with the current state of the resource",
+  },
+  422: {
+    title: "UNPROCESSABLE_ENTITY",
+    description: "Validation failed or missing fields",
+  },
+  500: {
+    title: "INTERNAL_SERVER_ERROR",
+    description: "Something went wrong on our end",
+  },
+  503: {
+    title: "SERVICE_UNAVAILABLE",
+    description:
+      "The service is temporarily unavailable. Please try again later",
+  },
+} as const;
+
+export type HttpStatusCode = keyof typeof HTTP_STATUS;

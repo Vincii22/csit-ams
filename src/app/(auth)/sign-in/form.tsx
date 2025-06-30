@@ -203,7 +203,7 @@ function LoggedInContainer({
 
 function AlertContainer({ type }: { type: string }) {
   switch (type) {
-    case "dashboard":
+    case "/dashboard":
       return (
         <Alert className="text-yellow-400 bg-yellow-950">
           <TriangleAlert />

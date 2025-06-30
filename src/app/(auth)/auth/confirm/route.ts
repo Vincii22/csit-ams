@@ -3,6 +3,7 @@ import { type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import prisma from "@/lib/prisma";
 import { UserMetadata } from "@/lib/types";
+import { redirectToError } from "@/lib/utils/redirect";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -13,9 +14,10 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get("next") ?? "/";
 
   if (!token_hash || !type) {
-    return Response.redirect(
-      new URL("/error?message=Missing_token_or_type", request.url)
-    );
+    return redirectToError(request, {
+      status: 401,
+      message: "Missing token or type",
+    });
   }
 
   try {
@@ -24,16 +26,19 @@ export async function GET(request: NextRequest) {
       token_hash,
     });
 
+    // failed OTP verification
     if (error) {
-      return Response.redirect(
-        new URL("/error?message=OTP_verification_failed", request.url)
-      );
+      return redirectToError(request, {
+        status: error.status,
+        message: error.message,
+      });
     }
 
     if (!data?.user) {
-      return Response.redirect(
-        new URL("/error?message=No_user_data", request.url)
-      );
+      return redirectToError(request, {
+        status: 401,
+        message: "No user data",
+      });
     }
 
     const user_metadata = data.user.user_metadata as UserMetadata;
@@ -44,9 +49,10 @@ export async function GET(request: NextRequest) {
       !user_metadata?.year ||
       !user_metadata?.role
     ) {
-      return Response.redirect(
-        new URL("/error?message=Missing_user_metadata", request.url)
-      );
+      return redirectToError(request, {
+        status: 400,
+        message: "Missing user metadata",
+      });
     }
 
     const course = await prisma.course.findUnique({
@@ -54,12 +60,10 @@ export async function GET(request: NextRequest) {
     });
 
     if (!course) {
-      return Response.redirect(
-        new URL(
-          `/error?message=Course_not_found_${user_metadata.role}`,
-          request.url
-        )
-      );
+      return redirectToError(request, {
+        status: 404,
+        message: "No course found",
+      });
     }
 
     await prisma.$transaction(async (tx) => {
@@ -95,9 +99,12 @@ export async function GET(request: NextRequest) {
     return Response.redirect(new URL(next, request.url));
   } catch (error) {
     console.error("Error in auth confirmation:", error);
+
     const message = error instanceof Error ? error.message : "Unknown_error";
-    return Response.redirect(
-      new URL(`/error?message=${encodeURIComponent(message)}`, request.url)
-    );
+
+    return redirectToError(request, {
+      status: 777,
+      message,
+    });
   }
 }

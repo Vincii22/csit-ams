@@ -1,5 +1,7 @@
 "use client";
 
+import { SidebarLayout } from "@/components/layouts/sidebar-layout";
+
 export default function OfficerDashboard() {
-  return <div>This is the officer view</div>;
+  return <SidebarLayout>This is the officer view</SidebarLayout>;
 }

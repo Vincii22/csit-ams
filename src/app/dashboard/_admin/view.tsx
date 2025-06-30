@@ -1,5 +1,7 @@
 "use client";
 
+import { SidebarLayout } from "@/components/layouts/sidebar-layout";
+
 export default function AdminDashboard() {
-  return <div>This is the admin view</div>;
+  return <SidebarLayout>This is the admin view</SidebarLayout>;
 }

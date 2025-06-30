@@ -1,6 +1,5 @@
 "use client";
 
-import { SidebarLayout } from "@/components/layouts/sidebar-layout";
 import { useAuthStore } from "@/lib/state/auth.store";
 import { useAuthSessionCheck } from "@/shared/hooks/use-auth";
 
@@ -9,11 +8,11 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // check if session is valid
   useAuthSessionCheck();
+
   const { user } = useAuthStore();
   if (!user) return null;
 
-  if (user.role === "student") return <div>{children}</div>;
-
-  return <SidebarLayout>{children}</SidebarLayout>;
+  return <>{children}</>;
 }

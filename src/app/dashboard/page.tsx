@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuthStore } from "@/lib/state/auth.store";
-import { useAuthSessionCheck } from "@/shared/hooks/use-auth";
 
 import AdminDashboard from "./_admin/view";
 import StudentDashboard from "./_student/view";
@@ -10,9 +9,6 @@ import Loader from "@/components/ui/loader";
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
-
-  useAuthSessionCheck();
-
   if (!user) return null;
 
   switch (user.role) {
