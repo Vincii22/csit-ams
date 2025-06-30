@@ -60,6 +60,6 @@ export const useAuthStore = create<UserState>()(
     {
       name: "auth-store",
       storage,
-    },
-  ),
+    }
+  )
 );

@@ -25,3 +25,11 @@ type AdminOrStudentUser = BaseUser & {
 };
 
 export type User = OfficerUser | AdminOrStudentUser;
+
+export type UserMetadata = {
+  name: string;
+  schoolId: string;
+  course: "BSIT" | "BSCS";
+  year: number;
+  role: Role;
+};
