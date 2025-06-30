@@ -1,3 +1,5 @@
+"use client";
+
 import { toast } from "sonner";
 import { useAuthStore } from "../state/auth.store";
 import { supabase } from "@/lib/supabase/client";
