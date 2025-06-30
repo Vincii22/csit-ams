@@ -13,6 +13,7 @@ const image = {
 export default function SignInPage() {
   const [redirectedFrom, setRedirectedFrom] = useState<string | null>(null);
 
+  // check if redirected from the dashboard
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get("redirectedFrom");

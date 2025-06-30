@@ -1,3 +1,14 @@
+export enum IconSizes {
+  XL = 24,
+  LARGE = 22,
+  MED = 20,
+  SMALL = 18,
+  XS = 16,
+}
+
+export const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+
 export const Semesters = [1, 2] as const;
 
 export const YearLevels = [1, 2, 3, 4] as const;
@@ -21,14 +32,6 @@ export const Positions = {
   IT_REP: "IT Representative",
   CS_REP: "CS Representative",
 } as const;
-
-export enum IconSizes {
-  XL = 24,
-  LARGE = 22,
-  MED = 20,
-  SMALL = 18,
-  XS = 16,
-}
 
 export const HTTP_STATUS = {
   400: {

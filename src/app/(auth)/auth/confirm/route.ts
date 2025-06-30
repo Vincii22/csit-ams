@@ -3,7 +3,7 @@ import { type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import prisma from "@/lib/prisma";
 import { UserMetadata } from "@/lib/types";
-import { redirectToError } from "@/lib/utils/redirect";
+import { redirectToServerError } from "@/lib/utils/redirect";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get("next") ?? "/";
 
   if (!token_hash || !type) {
-    return redirectToError(request, {
+    return redirectToServerError(request, {
       status: 401,
       message: "Missing token or type",
     });
@@ -28,14 +28,14 @@ export async function GET(request: NextRequest) {
 
     // failed OTP verification
     if (error) {
-      return redirectToError(request, {
+      return redirectToServerError(request, {
         status: error.status,
         message: error.message,
       });
     }
 
     if (!data?.user) {
-      return redirectToError(request, {
+      return redirectToServerError(request, {
         status: 401,
         message: "No user data",
       });
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
       !user_metadata?.year ||
       !user_metadata?.role
     ) {
-      return redirectToError(request, {
+      return redirectToServerError(request, {
         status: 400,
         message: "Missing user metadata",
       });
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!course) {
-      return redirectToError(request, {
+      return redirectToServerError(request, {
         status: 404,
         message: "No course found",
       });
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
 
     const message = error instanceof Error ? error.message : "Unknown_error";
 
-    return redirectToError(request, {
+    return redirectToServerError(request, {
       status: 777,
       message,
     });
