@@ -20,8 +20,8 @@ const SchoolId = z
 export const loginSchema = z.object({
   email: z
     .string()
-    .email({ message: "Invalid email address" })
-    .min(1, "Email is required"),
+    .min(1, "Email is required")
+    .regex(/^[0-9]+@dwc-legazpi\.edu$/, "Invalid school email address"),
   password: z.string().min(1, "Password is required"),
   remember: z.boolean(),
 });
@@ -31,11 +31,11 @@ export const registerSchema = z.object({
     .string()
     .min(1, "Full name is required")
     .regex(/^\D*$/, "Must not contain any digits")
-    .regex(/^[a-zA-Z\s]*$/, "Must not contain special characters"),
+    .regex(/^[a-zA-Z.\s]*$/, "Must not contain special characters"),
   email: z
     .string()
-    .email({ message: "Invalid email address" })
-    .min(1, "Email is required"),
+    .min(1, "Email is required")
+    .regex(/^[0-9]+@dwc-legazpi\.edu$/, "Invalid school email address"),
   password: z.string().min(1, "Password is required"),
   schoolId: SchoolId,
   yearLevel: YearLevel,

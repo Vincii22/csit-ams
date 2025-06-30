@@ -27,12 +27,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PasswordInput } from "../password";
 import Loader from "@/components/ui/loader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, TriangleAlert } from "lucide-react";
+
+type SignInFormProps = React.ComponentProps<"form"> & {
+  redirectedFrom?: string | null;
+};
 
 export function SignInForm({
+  redirectedFrom,
   className,
   ...props
-}: React.ComponentProps<"form">) {
+}: SignInFormProps) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -43,20 +48,16 @@ export function SignInForm({
 
   useEffect(() => {
     checkSession();
-  });
-
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      remember: false,
-    },
-  });
+  }, []);
 
   async function handleClickLogout() {
     await handleLogout();
   }
+
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "", remember: false },
+  });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     const { error } = await signIn(values);
@@ -66,39 +67,8 @@ export function SignInForm({
     }
   }
 
-  function LoggedInContainer() {
-    return (
-      <div className="flex flex-col gap-10">
-        <h1 className="text-3xl font-medium text-balance">
-          Looks like you're still logged in
-        </h1>
-        <div className="grid gap-4">
-          <Link href="/dashboard">
-            <Button type="button" size="lg" className="primary-btn w-full">
-              Proceed to dashboard
-            </Button>
-          </Link>
-          <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-            <span className="bg-background text-white relative z-10 px-2">
-              or
-            </span>
-          </div>
-          <Button
-            variant="outline"
-            type="button"
-            size="lg"
-            className="w-full"
-            onClick={handleClickLogout}
-          >
-            Sign out
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return loggedIn ? (
-    <LoggedInContainer />
+    <LoggedInContainer handleClickLogout={handleClickLogout} />
   ) : (
     <Form {...form}>
       <form
@@ -131,10 +101,12 @@ export function SignInForm({
             </span>
           </div>
 
+          <AlertContainer type={redirectedFrom ?? ""} />
+
           {form.formState.errors.root && (
-            <Alert variant="destructive">
+            <Alert className="text-red-400 bg-red-950">
               <AlertCircle />
-              <AlertDescription>
+              <AlertDescription className="text-red-400">
                 {form.formState.errors.root.message}
               </AlertDescription>
             </Alert>
@@ -192,4 +164,55 @@ export function SignInForm({
       </form>
     </Form>
   );
+}
+
+function LoggedInContainer({
+  handleClickLogout,
+}: {
+  handleClickLogout: () => void;
+}) {
+  return (
+    <div className="flex flex-col gap-10">
+      <h1 className="text-3xl font-medium text-balance">
+        Looks like you're still logged in
+      </h1>
+      <div className="grid gap-4">
+        <Link href="/dashboard">
+          <Button type="button" size="lg" className="primary-btn w-full">
+            Proceed to dashboard
+          </Button>
+        </Link>
+        <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+          <span className="bg-background text-white relative z-10 px-2">
+            or
+          </span>
+        </div>
+        <Button
+          variant="outline"
+          type="button"
+          size="lg"
+          className="w-full"
+          onClick={handleClickLogout}
+        >
+          Sign out
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function AlertContainer({ type }: { type: string }) {
+  switch (type) {
+    case "dashboard":
+      return (
+        <Alert className="text-yellow-400 bg-yellow-950">
+          <TriangleAlert />
+          <AlertDescription className="text-yellow-400">
+            Sign in to continue to the dashboard
+          </AlertDescription>
+        </Alert>
+      );
+    default:
+      return null;
+  }
 }

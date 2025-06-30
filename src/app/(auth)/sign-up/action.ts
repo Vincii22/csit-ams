@@ -9,7 +9,7 @@ import { z } from "zod";
 export async function signUp(data: z.infer<typeof registerSchema>) {
   const supabase = await createClient();
 
-  const { error, data: authData } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email: data.email,
     password: data.password,
     options: {
@@ -20,12 +20,13 @@ export async function signUp(data: z.infer<typeof registerSchema>) {
     },
   });
 
-  console.log(authData.user?.id);
-
   if (error) {
     redirect("/error");
   }
 
+  const redirectedFrom = "sign-up";
+  const url = `/sign-in?redirectedFrom=${encodeURIComponent(redirectedFrom)}`;
+
   revalidatePath("/");
-  redirect("/dashboard");
+  redirect(url);
 }

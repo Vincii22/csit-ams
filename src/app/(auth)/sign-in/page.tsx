@@ -1,28 +1,32 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { SignInForm } from "./form";
-import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import AuthLayout from "@/components/layouts/auth-layout";
+import { clearSearchParams } from "@/lib/utils/search-params";
+
+const image = {
+  src: "/images/placeholder.jpg",
+  alt: "Picture of a cool scene from Berserk",
+};
 
 export default function SignInPage() {
-  const searchParams = useSearchParams();
+  const [redirectedFrom, setRedirectedFrom] = useState<string | null>(null);
 
   useEffect(() => {
-    const redirectedFrom = searchParams.get("redirectedFrom");
+    const params = new URLSearchParams(window.location.search);
+    const from = params.get("redirectedFrom");
 
-    if (redirectedFrom) {
-      setTimeout(() => {
-        toast.warning("You are not signed in. Please login to proceed.");
-      }, 0);
+    if (from) {
+      setRedirectedFrom(from);
+      clearSearchParams("redirectedFrom");
     }
-  }, [searchParams]);
+  }, []);
 
-  const image = {
-    src: "/images/placeholder.jpg",
-    alt: "Picture of a cool scene from Berserk",
-  };
-
-  return <AuthLayout form={<SignInForm />} image={image} />;
+  return (
+    <AuthLayout
+      form={<SignInForm redirectedFrom={redirectedFrom} />}
+      image={image}
+    />
+  );
 }
