@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import Loader from "@/components/ui/loader";
 import { useRehydrateAuth } from "@/shared/hooks/use-auth";
 

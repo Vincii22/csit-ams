@@ -87,7 +87,7 @@ export function SignUpForm({
               <FormItem>
                 <FormLabel>Full name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Omsim Barabida" {...field} />
+                  <Input placeholder="Manuel II M. Caballero" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,7 +100,7 @@ export function SignUpForm({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="omsimbarabida@gmail.com" {...field} />
+                  <Input placeholder="07307477@dwc-legazpi.edu" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -114,7 +114,7 @@ export function SignUpForm({
                 <FormItem>
                   <FormLabel>School ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="0769696" {...field} />
+                    <Input placeholder="07307477" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

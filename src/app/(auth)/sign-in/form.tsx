@@ -4,7 +4,7 @@ import { z } from "zod";
 import { handleLogout } from "@/lib/auth/handle-logout";
 import { useEffect, useState } from "react";
 import { signInWithGoogle } from "@/lib/auth/oauth";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/schemas/auth.schema";
 import { useForm } from "react-hook-form";
@@ -147,7 +147,7 @@ export function SignInForm({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="omsimbarabida@gmail.com" {...field} />
+                  <Input placeholder="07310316@dwc-legazpi.edu" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

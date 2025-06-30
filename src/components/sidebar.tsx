@@ -83,7 +83,7 @@ export default function Sidebar() {
             )}
           </AnimatePresence>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center">
             {expandedSidebar && (
               <Button
                 variant="ghost"

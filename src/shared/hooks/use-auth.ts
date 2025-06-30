@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/lib/state/auth.store";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";

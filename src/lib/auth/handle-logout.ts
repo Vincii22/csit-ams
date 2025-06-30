@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { useAuthStore } from "../state/auth.store";
-import { supabase } from "../supabase";
+import { supabase } from "@/lib/supabase/client";
 
 export async function handleLogout() {
   const { clearUser } = useAuthStore.getState();
