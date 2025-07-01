@@ -28,6 +28,10 @@ import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
 import { signUp } from "./action";
 import { signInWithGoogle } from "@/lib/auth/oauth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { EmailDialog } from "./email-dialog";
+import { useEmailDialogStore } from "@/lib/state/email-dialog.store";
 
 export function SignUpForm({
   className,
@@ -47,8 +51,17 @@ export function SignUpForm({
     },
   });
 
+  const { setOpen, setEmail } = useEmailDialogStore();
+
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    await signUp(values);
+    const { success, message, email } = await signUp(values);
+
+    if (success) {
+      setEmail(email as string);
+      setOpen(true);
+    } else {
+      form.setError("root", { message });
+    }
   }
 
   return (
@@ -80,6 +93,18 @@ export function SignUpForm({
               or
             </span>
           </div>
+
+          <EmailDialog />
+
+          {form.formState.errors.root && (
+            <Alert variant="destructive">
+              <AlertCircle />
+              <AlertDescription>
+                {form.formState.errors.root.message}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <FormField
             control={form.control}
             name="name"

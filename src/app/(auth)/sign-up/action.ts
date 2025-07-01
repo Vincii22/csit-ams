@@ -22,8 +22,13 @@ export async function signUp(data: z.infer<typeof registerSchema>) {
   });
 
   if (error) {
-    return { success: false, status: 400, msg: error.message };
+    return { success: false, status: 400, message: error.message };
   }
 
-  return { success: true, status: 204, msg: "Waiting for email confirmation" };
+  return {
+    success: true,
+    status: 204,
+    message: "Waiting for email confirmation",
+    email: data.email,
+  };
 }
