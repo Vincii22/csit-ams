@@ -4,13 +4,7 @@ import { registerSchema } from "@/lib/schemas/auth.schema";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
-type SignUpResult =
-  | { success: true; message: string; email: string }
-  | { success: false; error: { message: string } };
-
-export async function signUp(
-  data: z.infer<typeof registerSchema>,
-): Promise<SignUpResult> {
+export async function signUp(data: z.infer<typeof registerSchema>) {
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
