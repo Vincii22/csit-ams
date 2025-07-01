@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/lib/schemas/auth.schema";
@@ -31,7 +31,7 @@ import { signInWithGoogle } from "@/lib/auth/oauth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { EmailDialog } from "./email-dialog";
-import { useEmailDialogStore } from "@/lib/state/email-dialog.store";
+import { usePopup } from "@/shared/contexts/popup-context";
 
 export function SignUpForm({
   className,
@@ -51,14 +51,13 @@ export function SignUpForm({
     },
   });
 
-  const { setOpen, setEmail } = useEmailDialogStore();
+  const { openPopup } = usePopup();
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     const { success, message, email } = await signUp(values);
 
     if (success) {
-      setEmail(email as string);
-      setOpen(true);
+      openPopup("", <EmailDialog email={email as string} />);
     } else {
       form.setError("root", { message });
     }
@@ -93,8 +92,6 @@ export function SignUpForm({
               or
             </span>
           </div>
-
-          <EmailDialog />
 
           {form.formState.errors.root && (
             <Alert variant="destructive">
