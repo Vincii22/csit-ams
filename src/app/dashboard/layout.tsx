@@ -1,18 +1,14 @@
 "use client";
 
-import { useAuthStore } from "@/lib/state/auth.store";
-import { useAuthSessionCheck } from "@/shared/hooks/use-auth";
+import { useAuth } from "@/shared/hooks/use-auth";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // check if session is valid
-  useAuthSessionCheck();
-
-  const { user } = useAuthStore();
-  if (!user) return null;
+  // keep check if token expires or is expired already
+  useAuth().checkSession();
 
   return <>{children}</>;
 }

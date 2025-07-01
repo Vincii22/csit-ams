@@ -1,9 +1,7 @@
 "use client";
 
 import { z } from "zod";
-import { handleLogout } from "@/lib/auth/handle-logout";
 import { useEffect, useState } from "react";
-import { signInWithGoogle } from "@/lib/auth/oauth";
 import { supabase } from "@/lib/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/schemas/auth.schema";
@@ -28,6 +26,9 @@ import { PasswordInput } from "../password";
 import Loader from "@/components/ui/loader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, TriangleAlert } from "lucide-react";
+import { useAuthStore } from "@/lib/state/auth.store";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/shared/hooks/use-auth";
 
 type SignInFormProps = React.ComponentProps<"form"> & {
   redirectedFrom?: string | null;
@@ -41,6 +42,9 @@ export function SignInForm({
   const [loggedIn, setLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const { signInWithGoogle, logout } = useAuth();
+  const router = useRouter();
+
   async function checkSession() {
     const { data } = await supabase.auth.getUser();
     data.user && setLoggedIn(true);
@@ -50,25 +54,36 @@ export function SignInForm({
     checkSession();
   }, []);
 
-  async function handleClickLogout() {
-    await handleLogout();
-  }
-
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", remember: false },
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    const { error } = await signIn(values);
+    const result = await signIn(values);
 
-    if (error) {
-      form.setError("root", { message: error.message });
+    if (!result.success) {
+      form.setError("root", { message: result.error.message });
+      return;
     }
+
+    // save to state when email sign in
+    useAuthStore.getState().setRemember(result.remember ?? false);
+    useAuthStore.getState().setUser({
+      id: result.user.id,
+      fullName: result.user.user_metadata.full_name ?? "Anonymous",
+      email: result.user.email!,
+      role: result.user.user_metadata.role ?? "student",
+      yearLevel: result.user.user_metadata.year_level ?? 1,
+      course: result.user.user_metadata.course ?? "BSIT",
+      position: result.user.user_metadata.position ?? "",
+    });
+
+    router.replace("/");
   }
 
   return loggedIn ? (
-    <LoggedInContainer handleClickLogout={handleClickLogout} />
+    <LoggedInContainer handleClickLogout={logout} />
   ) : (
     <Form {...form}>
       <form

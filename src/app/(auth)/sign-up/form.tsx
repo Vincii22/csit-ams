@@ -27,12 +27,13 @@ import {
 import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
 import { signUp } from "./action";
-import { signInWithGoogle } from "@/lib/auth/oauth";
+import { useAuth } from "@/shared/hooks/use-auth";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const { signInWithGoogle } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({

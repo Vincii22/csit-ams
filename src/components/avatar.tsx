@@ -5,16 +5,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
-import { handleLogout } from "@/lib/auth/handle-logout";
+import { useAuth } from "@/shared/hooks/use-auth";
 
 export default function Avatar({ user }: { user: User }) {
+  const { logout } = useAuth();
+
   const initials = user.fullName.split(" ");
   const firstInitial = initials[0].charAt(0);
   const lastInitial = initials[initials.length - 1].charAt(0);
-
-  async function logout() {
-    await handleLogout();
-  }
 
   return (
     <Popover>
@@ -35,7 +33,7 @@ export default function Avatar({ user }: { user: User }) {
           <Button
             variant="ghost"
             className="justify-start !rounded-t-[0]"
-            onClick={() => logout()}
+            onClick={logout}
           >
             <LogOut className="size-4.5" />
             Sign out

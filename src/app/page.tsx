@@ -2,23 +2,21 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
+import { useAuth } from "@/shared/hooks/use-auth";
 import Loader from "@/components/ui/loader";
-import { useRehydrateAuth } from "@/shared/hooks/use-auth";
 
 export default function App() {
   const router = useRouter();
-
-  useRehydrateAuth();
-
-  async function checkSession() {
-    const { data } = await supabase.auth.getUser();
-    data.user ? router.replace("/dashboard") : router.replace("/sign-in");
-  }
+  const { rehydrate } = useAuth();
 
   useEffect(() => {
-    checkSession();
-  }, []);
+    async function init() {
+      const isSignedIn = await rehydrate();
+      router.replace(isSignedIn ? "/dashboard" : "/sign-in");
+    }
+
+    init();
+  }, [rehydrate, router]);
 
   return (
     <div className="flex h-screen items-center justify-center">

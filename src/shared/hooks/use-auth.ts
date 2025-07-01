@@ -1,43 +1,86 @@
-import { useAuthStore } from "@/lib/state/auth.store";
-import { supabase } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+"use client";
+
+import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase/client";
+import { useAuthStore } from "@/lib/state/auth.store";
+import { redirectToClientError } from "@/lib/utils/redirect";
 
-export function useAuthSessionCheck() {
-  const { user, expiresAt, clearUser } = useAuthStore();
-  const router = useRouter();
+export function useAuth() {
+  const { user, expiresAt, clearUser, setUser, setRemember } = useAuthStore();
 
-  useEffect(() => {
-    if (user && expiresAt && Math.floor(Date.now() / 1000) > expiresAt) {
-      clearUser();
-      router.replace("sign-in");
-      toast.info("Session expired. Please sign in again.");
-    }
-  }, []);
-}
+  function checkSession({
+    redirect = true,
+  }: { redirect?: boolean; withLoading?: boolean } = {}) {
+    useEffect(() => {
+      const interval = setInterval(() => {
+        const now = Math.floor(Date.now() / 1000);
 
-export function useRehydrateAuth() {
-  const setUser = useAuthStore((state) => state.setUser);
+        if (user && expiresAt && now > expiresAt) {
+          clearUser();
+          supabase.auth.signOut();
 
-  useEffect(() => {
-    async function rehydrate() {
-      const { data, error } = await supabase.auth.getSession();
-      if (error || !data.session?.user) return;
+          if (redirect) {
+            redirectToClientError({
+              status: 401,
+              message: "Your session has expired",
+              action: "sign-in",
+            });
+          }
+        }
+      }, 10_000);
 
-      const user = data.session.user;
+      return () => clearInterval(interval);
+    }, [user, expiresAt]);
+  }
 
-      setUser({
-        id: user.id,
-        fullName: user.user_metadata.full_name ?? "Anonymous",
-        email: user.email!,
-        role: "officer",
-        yearLevel: 1,
-        course: "BSIT",
-        position: "External Vice President",
-      });
-    }
+  const rehydrate = useCallback(async () => {
+    const { data, error } = await supabase.auth.getSession();
+    if (error || !data.session?.user) return false;
 
-    rehydrate();
+    const u = data.session.user;
+
+    setUser({
+      id: u.id,
+      fullName: u.user_metadata.full_name ?? "Anonymous",
+      email: u.email!,
+      role: u.user_metadata.role ?? "student",
+      yearLevel: u.user_metadata.year_level ?? 1,
+      course: u.user_metadata.course ?? "BSIT",
+      position: u.user_metadata.position ?? "",
+    });
+
+    return true;
   }, [setUser]);
+
+  async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Could not sign out. Please try again.");
+      return;
+    }
+
+    clearUser();
+    window.location.href = "/sign-in";
+  }
+
+  function signInWithGoogle() {
+    supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${location.origin}/auth/callback?next=/`,
+      },
+    });
+  }
+
+  return {
+    user,
+    checkSession,
+    rehydrate,
+    logout,
+    signInWithGoogle,
+    setRemember,
+    setUser,
+    clearUser,
+  };
 }
