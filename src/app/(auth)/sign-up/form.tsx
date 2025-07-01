@@ -102,6 +102,7 @@ export function SignUpForm({
               </AlertDescription>
             </Alert>
           )}
+
           <FormField
             control={form.control}
             name="name"

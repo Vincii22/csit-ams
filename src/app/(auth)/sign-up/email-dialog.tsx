@@ -1,5 +1,11 @@
 "use client";
 
+// TODO: IMPLEMENT COUNT DOWN ON RESEND TIMEOUT
+//
+// NOTE:
+// - SHOULD BE ABLE TO RESEND CONFIRMATION AGAIN AFTER THE COUNT DOWN.
+// - SCRAPE THE COUNT DOWN FROM THE ERROR MESSAGE
+
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
