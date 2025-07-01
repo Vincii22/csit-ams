@@ -7,7 +7,7 @@ export default function StudentDashboard() {
     <button
       onClick={() => {
         useAuthStore.setState({
-          expiresAt: Math.floor(Date.now() / 1000) + 10, // expired
+          expiresAt: Math.floor(Date.now() / 1000) + 5, // expired
         });
       }}
     >

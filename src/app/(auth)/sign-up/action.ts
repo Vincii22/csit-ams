@@ -4,7 +4,13 @@ import { registerSchema } from "@/lib/schemas/auth.schema";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
-export async function signUp(data: z.infer<typeof registerSchema>) {
+type SignUpResult =
+  | { success: true }
+  | { success: false; error: { message: string } };
+
+export async function signUp(
+  data: z.infer<typeof registerSchema>,
+): Promise<SignUpResult> {
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
@@ -22,8 +28,10 @@ export async function signUp(data: z.infer<typeof registerSchema>) {
   });
 
   if (error) {
-    return { success: false, status: 400, msg: error.message };
+    return { success: false, error: { message: error.message } };
   }
 
-  return { success: true, status: 204, msg: "Waiting for email confirmation" };
+  return {
+    success: true,
+  };
 }

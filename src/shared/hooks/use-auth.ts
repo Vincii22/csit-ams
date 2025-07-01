@@ -45,7 +45,7 @@ export function useAuth() {
       fullName: u.user_metadata.full_name ?? "Anonymous",
       email: u.email!,
       role: u.user_metadata.role ?? "student",
-      yearLevel: u.user_metadata.year_level ?? 1,
+      yearLevel: u.user_metadata.year ?? 1,
       course: u.user_metadata.course ?? "BSIT",
       position: u.user_metadata.position ?? "",
     });

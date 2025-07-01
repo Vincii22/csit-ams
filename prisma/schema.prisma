@@ -15,7 +15,7 @@ datasource db {
 }
 
 enum Role {
-  ADMIN @map("Admin")
+  ADMIN   @map("Admin")
   STUDENT @map("Student")
   OFFICER @map("Officer")
 }
@@ -26,30 +26,29 @@ model User {
   email      String   @unique
   verifiedAt DateTime
   role       Role     @default(STUDENT)
-  student Student? 
+  student    Student?
 }
 
 model Course {
-  id       String    @id @default(uuid())
-  course   String
-  abbreviation String @unique
-  students Student[]
+  id           String    @id @default(uuid())
+  course       String
+  abbreviation String    @unique
+  students     Student[]
 }
 
 model Position {
-  id String @id @default(uuid())
-  title String
+  id       String    @id @default(uuid())
+  title    String
   students Student[]
 }
 
 model Student {
-  id       String @id
-  schoolId String
-  courseId String
+  id         String    @id
+  schoolId   String
+  courseId   String
   positionId String?
-  year     Int
-  course   Course @relation(fields: [courseId], references: [id])
-  position Position? @relation(fields: [positionId], references: [id])
-  user User @relation(fields: [id], references: [id])
+  year       Int
+  course     Course    @relation(fields: [courseId], references: [id])
+  position   Position? @relation(fields: [positionId], references: [id])
+  user       User      @relation(fields: [id], references: [id])
 }
-

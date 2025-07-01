@@ -11,7 +11,7 @@ export default function DashboardPage() {
   const { user } = useAuthStore();
   if (!user) return null;
 
-  switch (user.role) {
+  switch (user.role.toLowerCase()) {
     case "admin":
       return <AdminDashboard />;
     case "officer":

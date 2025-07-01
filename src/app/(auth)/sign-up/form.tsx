@@ -28,12 +28,16 @@ import Loader from "@/components/ui/loader";
 import { PasswordInput } from "../password";
 import { signUp } from "./action";
 import { useAuth } from "@/shared/hooks/use-auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle } from "lucide-react";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
   const { signInWithGoogle } = useAuth();
+
+  const [showConfirmationAlert, setShowConfirmationAlert] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -49,10 +53,24 @@ export function SignUpForm({
   });
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    await signUp(values);
+    const result = await signUp(values);
+
+    if (!result.success) {
+      form.setError("root", { message: result.error.message });
+      return;
+    }
+
+    setShowConfirmationAlert(true);
   }
 
-  return (
+  return showConfirmationAlert ? (
+    <Alert className="text-green-400 bg-green-950">
+      <CheckCircle />
+      <AlertDescription className="text-green-400">
+        We sent you a confirmation link to verify your email{" "}
+      </AlertDescription>
+    </Alert>
+  ) : (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
