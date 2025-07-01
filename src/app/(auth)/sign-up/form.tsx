@@ -29,15 +29,15 @@ import { PasswordInput } from "../password";
 import { signUp } from "./action";
 import { useAuth } from "@/shared/hooks/use-auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { EmailDialog } from "./email-dialog";
+import { usePopup } from "@/shared/contexts/popup-context";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
   const { signInWithGoogle } = useAuth();
-
-  const [showConfirmationAlert, setShowConfirmationAlert] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -52,25 +52,19 @@ export function SignUpForm({
     },
   });
 
+  const { openPopup } = usePopup();
+
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    const result = await signUp(values);
+    const { success, message, email } = await signUp(values);
 
-    if (!result.success) {
-      form.setError("root", { message: result.error.message });
-      return;
+    if (success) {
+      openPopup("", <EmailDialog email={email as string} />);
+    } else {
+      form.setError("root", { message });
     }
-
-    setShowConfirmationAlert(true);
   }
 
-  return showConfirmationAlert ? (
-    <Alert className="text-green-400 bg-green-950">
-      <CheckCircle />
-      <AlertDescription className="text-green-400">
-        We sent you a confirmation link to verify your email{" "}
-      </AlertDescription>
-    </Alert>
-  ) : (
+  return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
@@ -99,6 +93,15 @@ export function SignUpForm({
               or
             </span>
           </div>
+
+          {form.formState.errors.root && (
+            <Alert className="text-red-400 bg-red-950">
+              <AlertCircle />
+              <AlertDescription className="text-red-400">
+                {form.formState.errors.root.message}
+              </AlertDescription>
+            </Alert>
+          )}
           <FormField
             control={form.control}
             name="name"

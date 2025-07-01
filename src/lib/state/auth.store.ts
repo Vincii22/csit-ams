@@ -2,14 +2,14 @@ import { User } from "../types";
 import { create } from "zustand";
 import { persist, PersistStorage } from "zustand/middleware";
 
-interface UserState {
+type UserState = {
   user: User | null;
   remember: boolean;
   expiresAt: number | null;
   setUser: (user: User) => void;
   setRemember: (remember: boolean) => void;
   clearUser: () => void;
-}
+};
 
 const storage: PersistStorage<UserState> = {
   getItem: (name) => {
@@ -60,6 +60,6 @@ export const useAuthStore = create<UserState>()(
     {
       name: "auth-store",
       storage,
-    }
-  )
+    },
+  ),
 );

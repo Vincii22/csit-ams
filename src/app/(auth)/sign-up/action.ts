@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
 type SignUpResult =
-  | { success: true }
+  | { success: true; message: string; email: string }
   | { success: false; error: { message: string } };
 
 export async function signUp(
@@ -33,5 +33,7 @@ export async function signUp(
 
   return {
     success: true,
+    message: "Waiting for email confirmation",
+    email: data.email,
   };
 }
