@@ -1,23 +1,19 @@
 "use client";
 
-// TODO: IMPLEMENT COUNT DOWN ON RESEND TIMEOUT
-//
-// NOTE:
-// - SHOULD BE ABLE TO RESEND CONFIRMATION AGAIN AFTER THE COUNT DOWN.
-// - SCRAPE THE COUNT DOWN FROM THE ERROR MESSAGE
-
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import Loader from "@/components/ui/loader";
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/client";
 import { usePopup } from "@/shared/contexts/popup-context";
-import { AlertCircle, Loader2Icon, MailCheckIcon } from "lucide-react";
+import { AlertCircle, MailCheckIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function EmailDialog({ email }: { email: string }) {
-  const [resending, setResending] = useState<boolean>(false);
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [resending, setResending] = useState(false);
+  const [showCountdown, setShowCountdown] = useState(false);
+  const [countdown, setCountdown] = useState(60);
 
   const { closePopup } = usePopup();
   const supabase = createClient();
@@ -25,17 +21,30 @@ export function EmailDialog({ email }: { email: string }) {
   async function resendLink() {
     setResending(true);
 
-    const { error } = await supabase.auth.resend({
+    await supabase.auth.resend({
       email,
       type: "signup",
     });
 
+    setShowCountdown(true);
     setResending(false);
-
-    if (error) {
-      setError(error.message);
-    }
   }
+
+  useEffect(() => {
+    if (!showCountdown) return;
+
+    if (countdown <= 0) {
+      setShowCountdown(false);
+      setCountdown(60); // reset countdown
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [showCountdown, countdown]);
 
   return (
     <div className="grid gap-3 w-xl">
@@ -55,11 +64,14 @@ export function EmailDialog({ email }: { email: string }) {
 
       <Separator />
 
-      {error && (
-        <div className="px-4">
-          <Alert variant={"destructive"}>
+      {showCountdown && (
+        <div className="px-4 pt-3">
+          <Alert className="bg-yellow-950 text-yellow-400">
             <AlertCircle />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="text-yello-400">
+              For security purposes, you can request another link after{" "}
+              {countdown} seconds.
+            </AlertDescription>
           </Alert>
         </div>
       )}
@@ -78,40 +90,37 @@ export function EmailDialog({ email }: { email: string }) {
       <Separator />
 
       <div className="flex items-center justify-between px-4 pb-4">
-        {error ? (
-          <div></div>
-        ) : (
-          <div className="text-muted-foreground text-sm">
-            Didn't receive the email?{" "}
-            {resending ? (
-              <div className="flex items-center gap-1">
-                <span>Resending</span>
-                <Loader2Icon className="animate-spin" size={16} />
-              </div>
-            ) : (
+        <div className="text-muted-foreground text-sm">
+          {resending && <Loader />}
+          {!resending && showCountdown && (
+            <span>Please wait for the request limit to finish</span>
+          )}
+          {!resending && !showCountdown && (
+            <>
+              Didn't receive the email?{" "}
               <button
                 type="button"
-                className="text-white underline cursor-pointer"
                 onClick={resendLink}
+                disabled={showCountdown}
+                className="text-white underline cursor-pointer"
               >
                 Request a new link
               </button>
-            )}
-          </div>
-        )}
-
+            </>
+          )}
+        </div>
         <div className="btn-container">
           <Button variant="outline" onClick={closePopup}>
             Close
           </Button>
-          <Button asChild className="primary-btn">
-            <Link
-              href={"https://mail.google.com/mail/u/0/#inbox"}
-              target="_self"
-            >
+          <a
+            href={"https://mail.google.com/mail/u/0/#inbox"}
+            target="_blank" // so we can go back if link doesn't work
+          >
+            <Button asChild className="primary-btn">
               View email
-            </Link>
-          </Button>
+            </Button>
+          </a>
         </div>
       </div>
     </div>

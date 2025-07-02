@@ -45,8 +45,8 @@ export const registerSchema = z.object({
 export const forgotPasswordSchema = z.object({
   email: z
     .string()
-    .email({ message: "Invalid email address" })
-    .min(1, "Email is required"),
+    .min(1, "Email is required")
+    .regex(/^[0-9]+@dwc-legazpi\.edu$/, "Invalid school email address"),
 });
 
 export const resetPasswordSchema = z
