@@ -21,7 +21,7 @@ export const loginSchema = z.object({
   email: z
     .string()
     .min(1, "Email is required")
-    .regex(/^[0-9]+@dwc-legazpi\.edu$/, "Invalid school email address"),
+    .regex(/^(admin|[0-9]+)@dwc-legazpi\.edu$/, "Invalid school email address"),
   password: z.string().min(1, "Password is required"),
   remember: z.boolean(),
 });

@@ -10,22 +10,25 @@ import { useAuth } from "@/shared/hooks/use-auth";
 export default function Avatar({ user }: { user: User }) {
   const { logout } = useAuth();
 
-  const initials = user.fullName.split(" ");
-  const firstInitial = initials[0].charAt(0);
-  const lastInitial = initials[initials.length - 1].charAt(0);
+  const nameParts = user.name.trim().split(" ");
+  const firstInitial = nameParts[0]?.charAt(0).toUpperCase() ?? "?";
+  const lastInitial =
+    nameParts.length > 1
+      ? nameParts[nameParts.length - 1]?.charAt(0).toUpperCase()
+      : "";
+
+  const initials = `${firstInitial}${lastInitial}`;
 
   return (
     <Popover>
       <PopoverTrigger>
-        <div
-          className={`cursor-pointer flex items-center justify-center bg-pink-400 p-1 rounded-4xl`}
-        >
-          <span className="font-bold text-sm text-pink-100">{`${firstInitial}${lastInitial}`}</span>
+        <div className="cursor-pointer flex items-center justify-center bg-pink-400 p-1 rounded-4xl w-8 h-8">
+          <span className="font-bold text-sm text-pink-100">{initials}</span>
         </div>
       </PopoverTrigger>
       <PopoverContent align="end" sideOffset={7} className="!p-0">
         <div className="px-3 py-3">
-          <h3 className="font-semibold">{user.fullName}</h3>
+          <h3 className="font-semibold">{user.name}</h3>
           <p className="text-muted-foreground">{user.email}</p>
         </div>
         <Separator />

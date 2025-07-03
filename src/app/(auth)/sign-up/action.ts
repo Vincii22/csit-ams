@@ -7,6 +7,7 @@ import { z } from "zod";
 export async function signUp(data: z.infer<typeof registerSchema>) {
   const supabase = await createClient();
 
+  // create 'gate pass' to dashboard initial login
   const { error } = await supabase.auth.signUp({
     email: data.email,
     password: data.password,

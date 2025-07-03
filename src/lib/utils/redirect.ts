@@ -6,12 +6,14 @@ import { BASE_URL } from "../constants";
 type RedirectErrorOptions = {
   status?: number;
   message: string;
-  action?: string;
+  action?: RedirectErrorAction;
 };
 
-export type RedirectErrorAction = {
-  action: "sign-in" | "dashboard" | "try-again" | "go-back";
-};
+export type RedirectErrorAction =
+  | "sign-in"
+  | "dashboard"
+  | "try-again"
+  | "go-back";
 
 // NOTE: use in server environments
 export function redirectToServerError(

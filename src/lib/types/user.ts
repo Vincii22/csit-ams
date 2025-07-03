@@ -5,31 +5,30 @@ export type YearLevel = (typeof YearLevels)[number];
 export type Course = (typeof Courses)[number];
 export type Position = (typeof Positions)[keyof typeof Positions];
 
-type BaseUser = {
+export type BaseUser = {
   id: string;
-  fullName: string;
+  name: string;
   email: string;
+};
+
+export type Student = BaseUser & {
+  schoolId: string;
   course: Course;
-  yearLevel: YearLevel;
-  schoolId?: string;
+  year: YearLevel;
+  position?: Position | null;
+  role: "student" | "officer";
 };
 
-type OfficerUser = BaseUser & {
-  role: "officer";
-  position: Position;
+export type Admin = BaseUser & {
+  role: "admin";
 };
 
-type AdminOrStudentUser = BaseUser & {
-  role: "admin" | "student";
-  position?: never;
-};
-
-export type User = OfficerUser | AdminOrStudentUser;
+export type User = Student | Admin;
 
 export type UserMetadata = {
   name: string;
   schoolId: string;
-  course: "BSIT" | "BSCS";
   year: number;
   role: Role;
+  course: Course;
 };

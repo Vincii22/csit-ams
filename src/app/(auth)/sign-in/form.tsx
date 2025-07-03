@@ -29,6 +29,7 @@ import { AlertCircle, TriangleAlert } from "lucide-react";
 import { useAuthStore } from "@/lib/state/auth.store";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/shared/hooks/use-auth";
+import { isStudent } from "@/lib/utils/is-student";
 
 type SignInFormProps = React.ComponentProps<"form"> & {
   redirectedFrom?: string | null;
@@ -67,17 +68,15 @@ export function SignInForm({
       return;
     }
 
-    // save to state when email sign in
-    useAuthStore.getState().setRemember(result.remember ?? false);
-    useAuthStore.getState().setUser({
-      id: result.user.id,
-      fullName: result.user.user_metadata.full_name ?? "Anonymous",
-      email: result.user.email!,
-      role: result.user.user_metadata.role ?? "student",
-      yearLevel: result.user.user_metadata.year_level ?? 1,
-      course: result.user.user_metadata.course ?? "BSIT",
-      position: result.user.user_metadata.position ?? "",
-    });
+    const { user, remember } = result;
+    useAuthStore.getState().setRemember(remember ?? false);
+
+    if (isStudent(user)) {
+      useAuthStore.getState().setUser(user);
+    } else {
+      const { id, name, email, role } = user;
+      useAuthStore.getState().setUser({ id, name, email, role });
+    }
 
     router.replace("/");
   }

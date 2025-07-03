@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/state/auth.store";
 import { redirectToClientError } from "@/lib/utils/redirect";
+import { fetchUser } from "@/lib/db/fetch-user";
 
 export function useAuth() {
   const { user, expiresAt, clearUser, setUser, setRemember } = useAuthStore();
@@ -38,18 +39,10 @@ export function useAuth() {
     const { data, error } = await supabase.auth.getSession();
     if (error || !data.session?.user) return false;
 
-    const u = data.session.user;
+    const user = await fetchUser(data.session.user.email ?? "");
+    if (!user) return false;
 
-    setUser({
-      id: u.id,
-      fullName: u.user_metadata.full_name ?? "Anonymous",
-      email: u.email!,
-      role: u.user_metadata.role ?? "student",
-      yearLevel: u.user_metadata.year ?? 1,
-      course: u.user_metadata.course ?? "BSIT",
-      position: u.user_metadata.position ?? "",
-    });
-
+    setUser(user);
     return true;
   }, [setUser]);
 

@@ -1,8 +1,10 @@
 "use server";
 
+import prisma from "@/lib/prisma";
 import { loginSchema } from "@/lib/schemas/auth.schema";
 import { createClient } from "@/lib/supabase/server";
-import { User } from "@supabase/supabase-js";
+import { User } from "@/lib/types";
+import { normalizeUser } from "@/lib/utils/normalize-user";
 import { z } from "zod";
 
 // because typescript is saying 'undefined'
@@ -23,9 +25,27 @@ export async function signIn(
     return { success: false, error: { message: error.message } };
   }
 
+  if (!data.user.email_confirmed_at) {
+    return { success: false, error: { message: "Please verify your email" } };
+  }
+
+  const raw = await prisma.user.findUnique({
+    where: { email: data.user.email },
+    include: {
+      student: true,
+    },
+  });
+
+  // if user is not found
+  if (!raw) {
+    return { success: false, error: { message: "Invalid credentials" } };
+  }
+
+  let user: User = normalizeUser(raw);
+
   return {
     success: true,
-    user: data.user,
+    user,
     remember,
   };
 }
