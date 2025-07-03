@@ -107,9 +107,9 @@ export function ForgotPasswordForm({
             </div>
 
             {form.formState.errors.root && (
-              <Alert className="text-red-400 bg-red-950">
+              <Alert className="text-yellow-400 bg-yellow-950">
                 <AlertCircle />
-                <AlertDescription className="text-red-400">
+                <AlertDescription className="text-yellow-400">
                   {form.formState.errors.root.message}
                 </AlertDescription>
               </Alert>
