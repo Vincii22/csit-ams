@@ -1,3 +1,4 @@
+import { fetchUser } from "@/lib/db/fetch-user";
 import prisma from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { UserMetadata } from "@/lib/types";
@@ -29,39 +30,39 @@ export async function GET(request: Request) {
 
       const schoolId = data.user.email?.split("@")[0];
 
-      await prisma.$transaction(async (tx) => {
-        const user = await tx.user.upsert({
-          where: { email: data.user?.email as string },
-          update: { verifiedAt: new Date() },
-          create: {
-            id: data.user.id,
-            email: data.user?.email ?? "",
-            name: data.user.user_metadata.full_name,
-            role: "STUDENT",
-            verifiedAt: new Date(),
-          },
+      const exists = await fetchUser(data.user.email as string);
+
+      if (!exists) {
+        await prisma.$transaction(async (tx) => {
+          const user = await tx.user.upsert({
+            where: { email: data.user?.email as string },
+            update: { verifiedAt: new Date() },
+            create: {
+              id: data.user.id,
+              email: data.user?.email ?? "",
+              name: data.user.user_metadata.full_name,
+              role: "STUDENT",
+              verifiedAt: new Date(),
+            },
+          });
+
+          await tx.student.upsert({
+            where: { id: user.id },
+            update: {
+              schoolId: schoolId,
+              courseId: null,
+              year: null,
+            },
+            create: {
+              id: user.id,
+              schoolId: schoolId ?? "",
+              year: null,
+              courseId: null,
+              positionId: null,
+            },
+          });
         });
-
-        console.log(user);
-
-        const raw = await tx.student.upsert({
-          where: { id: user.id },
-          update: {
-            schoolId: schoolId,
-            year: null,
-            courseId: null,
-          },
-          create: {
-            id: user.id,
-            schoolId: schoolId ?? "",
-            year: null,
-            courseId: null,
-            positionId: null,
-          },
-        });
-
-        console.log(raw);
-      });
+      }
 
       const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === "development";
