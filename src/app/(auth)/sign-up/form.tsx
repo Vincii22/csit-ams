@@ -55,12 +55,16 @@ export function SignUpForm({
   const { openPopup } = usePopup();
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    const { success, message, email } = await signUp(values);
+    const { success, message, email, error } = await signUp(values);
 
     if (success) {
       openPopup("", <EmailDialog email={email as string} />);
     } else {
-      form.setError("root", { message });
+      if (error?.email) {
+        form.setError("email", { message: error.email.message });
+      } else {
+        form.setError("root", { message });
+      }
     }
   }
 
