@@ -20,35 +20,264 @@ enum Role {
   OFFICER @map("Officer")
 }
 
+enum FinanceStatus {
+  PENDING
+  PAID
+  WAIVED
+}
+
+enum EventType {
+  GA        @map("General Assembly")
+  HACKATHON @map("Hackathon")
+  CUSTOM    @map("Custom")
+}
+
+enum AttendanceStatus {
+  ABSENT
+  ATTENDED
+  EXCUSED
+}
+
+enum ClearanceStatus {
+  PENDING
+  CLEARED
+  REJECTED
+}
+
 model User {
   id         String   @id
   name       String
   email      String   @unique
-  verifiedAt DateTime
   role       Role     @default(STUDENT)
-  student    Student?
-}
+  verifiedAt DateTime
 
-model Course {
-  id           String    @id @default(uuid())
-  course       String
-  abbreviation String    @unique
-  students     Student[]
-}
+  student   Student?
+  Clearance Clearance[]
+  Log       Log[]
 
-model Position {
-  id       String    @id @default(uuid())
-  title    String
-  students Student[]
+  @@map("user")
 }
 
 model Student {
-  id         String    @id
+  id         String  @id
   schoolId   String
   courseId   String?
   positionId String?
   year       Int?
-  course     Course?   @relation(fields: [courseId], references: [id])
-  position   Position? @relation(fields: [positionId], references: [id])
-  user       User      @relation(fields: [id], references: [id])
+
+  course   Course?   @relation(fields: [courseId], references: [id])
+  position Position? @relation(fields: [positionId], references: [id])
+  user     User      @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  StudentAcademicYear StudentAcademicYear[]
+  Finance             Finance[]
+  Clearance           Clearance[]
+  Attendance          Attendance[]
+  Sanction            Sanction[]
+
+  @@map("student")
+}
+
+model Course {
+  id           String @id @default(uuid())
+  label        String
+  abbreviation String @unique
+
+  students Student[]
+
+  @@map("course")
+}
+
+model Position {
+  id           String  @id @default(uuid())
+  title        String  @unique
+  abbreviation String?
+
+  students Student[]
+
+  @@map("position")
+}
+
+model AcademicYear {
+  id        String    @id @default(uuid())
+  label     String
+  startDate DateTime
+  endDate   DateTime?
+
+  AcademicYearSemester AcademicYearSemester[]
+
+  @@map("academic_year")
+}
+
+model Semester {
+  id    String @id @default(uuid())
+  label String
+
+  AcademicYearSemester AcademicYearSemester[]
+
+  @@map("semester")
+}
+
+model AcademicYearSemester {
+  academicYearId String
+  semesterId     String
+
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
+  semester     Semester     @relation(fields: [semesterId], references: [id])
+
+  fees                Fee[]
+  events              Event[]
+  clearances          Clearance[]
+  sanctions           Sanction[]
+  studentAcademicYear StudentAcademicYear[]
+
+  @@id([academicYearId, semesterId])
+  @@map("academic_year_semester")
+}
+
+model StudentAcademicYear {
+  studentId      String
+  academicYearId String
+  semesterId     String
+
+  student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  academicYearSemester AcademicYearSemester @relation(fields: [academicYearId, semesterId], references: [academicYearId, semesterId], onDelete: Cascade)
+
+  @@unique([studentId, academicYearId, semesterId])
+  @@map("student_academic_year_semester")
+}
+
+model Fee {
+  id          String    @id @default(uuid())
+  ayId        String
+  semId       String
+  description String
+  amount      Decimal
+  isArchived  Boolean?
+  archivedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  academicYearSemester AcademicYearSemester @relation(fields: [ayId, semId], references: [academicYearId, semesterId], onDelete: Cascade)
+
+  finances Finance[]
+
+  @@index([ayId, semId])
+  @@map("fee")
+}
+
+model Finance {
+  id         String        @id @default(uuid())
+  studentId  String
+  feeId      String
+  status     FinanceStatus @default(PENDING)
+  note       String
+  isArchived Boolean?
+  archivedAt DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  fee     Fee     @relation(fields: [feeId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, feeId])
+  @@index([studentId])
+  @@map("finance")
+}
+
+model Event {
+  id          String    @id @default(uuid())
+  ayId        String
+  semId       String
+  type        EventType
+  description String
+  startTime   DateTime
+  endTime     DateTime
+  location    String
+  required    Boolean   @default(true)
+  isArchived  Boolean?
+  archivedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  academicYearSemester AcademicYearSemester @relation(fields: [ayId, semId], references: [academicYearId, semesterId], onDelete: Cascade)
+
+  attendances Attendance[]
+
+  @@index([ayId, semId])
+  @@map("event")
+}
+
+model Attendance {
+  id         String           @id @default(uuid())
+  studentId  String
+  eventId    String
+  timeIn     DateTime
+  timeout    DateTime?
+  status     AttendanceStatus
+  note       String?
+  isArchived Boolean?
+  archivedAt DateTime?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  Sanction Sanction[]
+
+  @@map("attendance")
+}
+
+model Sanction {
+  id             String    @id @default(uuid())
+  studentId      String
+  attendanceId   String
+  ayId           String
+  semId          String
+  requiredAction String
+  note           String?
+  isArchived     Boolean?
+  archivedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  attendance           Attendance           @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
+  academicYearSemester AcademicYearSemester @relation(fields: [ayId, semId], references: [academicYearId, semesterId], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([ayId, semId])
+  @@map("sanction")
+}
+
+model Clearance {
+  id           String          @id @default(uuid())
+  studentId    String
+  ayId         String
+  semId        String
+  reviewedById String?
+  status       ClearanceStatus
+  isArchived   Boolean?
+  archivedAt   DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reviewedBy           User?                @relation(fields: [reviewedById], references: [id], onDelete: SetNull)
+  academicYearSemester AcademicYearSemester @relation(fields: [ayId, semId], references: [academicYearId, semesterId])
+
+  @@unique([studentId, ayId, semId])
+  @@index([studentId])
+  @@map("clearance")
+}
+
+model Log {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  targetId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("log")
 }

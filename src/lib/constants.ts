@@ -18,7 +18,7 @@ export const Courses = ["BSIT", "BSCS"] as const;
 export const Roles = ["admin", "officer", "student"] as const;
 
 export const Positions = {
-  PRESIDENT: "President",
+  PRES: "President",
   IVP: "Internal Vice President",
   EVP: "External Vice President",
   SEC_GEN: "Secretary General",
