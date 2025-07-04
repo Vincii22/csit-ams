@@ -4,7 +4,6 @@ import AuthLayout from "@/components/layouts/auth-layout";
 import { ResetPasswordForm } from "./form";
 import { useEffect } from "react";
 import { redirectToClientError } from "@/lib/utils/redirect";
-import { supabase } from "@/lib/supabase/client";
 import { clearSearchParams } from "@/lib/utils/search-params";
 
 const image = {
@@ -28,9 +27,7 @@ const checkSession = async () => {
 
   const intent = params.get("intent");
 
-  const { data, error: sessionError } = await supabase.auth.getSession();
-
-  if (!data.session || sessionError || !intent) {
+  if (!intent) {
     return redirectToClientError({
       status: 403,
       message: "Use the reset link from your email.",

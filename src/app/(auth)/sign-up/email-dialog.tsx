@@ -113,14 +113,12 @@ export function EmailDialog({ email }: { email: string }) {
           <Button variant="outline" onClick={closePopup}>
             Close
           </Button>
-          <a
+          <Link
             href={"https://mail.google.com/mail/u/0/#inbox"}
             target="_blank" // so we can go back if link doesn't work
           >
-            <Button asChild className="primary-btn">
-              View email
-            </Button>
-          </a>
+            <Button className="primary-btn">View email</Button>
+          </Link>
         </div>
       </div>
     </div>
