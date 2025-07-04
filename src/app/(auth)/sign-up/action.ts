@@ -13,7 +13,7 @@ export async function signUp(data: z.infer<typeof registerSchema>) {
     password: data.password,
     options: {
       data: {
-        name: data.name,
+        full_name: data.name,
         schoolId: data.schoolId,
         course: data.course,
         year: parseInt(data.yearLevel),

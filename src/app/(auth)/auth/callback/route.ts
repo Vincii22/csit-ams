@@ -1,4 +1,6 @@
+import prisma from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { UserMetadata } from "@/lib/types";
 import { redirectToServerError } from "@/lib/utils/redirect";
 import { NextResponse } from "next/server";
 // The client you created from the Server-Side Auth instructions
@@ -15,29 +17,69 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
+
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (error) {
+    if (!error) {
       redirectToServerError(request, {
         status: 401,
         message: "Login failed",
         action: "sign-in",
       });
-    }
 
-    const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
-    const isLocalEnv = process.env.NODE_ENV === "development";
+      const schoolId = data.user.email?.split("@")[0];
 
-    if (isLocalEnv) {
-      // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-      return NextResponse.redirect(`${origin}${next}`);
-    } else if (forwardedHost) {
-      return NextResponse.redirect(`https://${forwardedHost}${next}`);
-    } else {
-      return NextResponse.redirect(`${origin}${next}`);
+      await prisma.$transaction(async (tx) => {
+        const user = await tx.user.upsert({
+          where: { email: data.user?.email as string },
+          update: { verifiedAt: new Date() },
+          create: {
+            id: data.user.id,
+            email: data.user?.email ?? "",
+            name: data.user.user_metadata.full_name,
+            role: "STUDENT",
+            verifiedAt: new Date(),
+          },
+        });
+
+        console.log(user);
+
+        const raw = await tx.student.upsert({
+          where: { id: user.id },
+          update: {
+            schoolId: schoolId,
+            year: null,
+            courseId: null,
+          },
+          create: {
+            id: user.id,
+            schoolId: schoolId ?? "",
+            year: null,
+            courseId: null,
+            positionId: null,
+          },
+        });
+
+        console.log(raw);
+      });
+
+      const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
+      const isLocalEnv = process.env.NODE_ENV === "development";
+
+      if (isLocalEnv) {
+        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
+        return NextResponse.redirect(`${origin}${next}`);
+      } else if (forwardedHost) {
+        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+      } else {
+        return NextResponse.redirect(`${origin}${next}`);
+      }
     }
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+  return redirectToServerError(request, {
+    status: 500,
+    message: "Interval Server Error",
+  });
 }

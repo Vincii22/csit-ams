@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     const user_metadata = data.user.user_metadata as UserMetadata;
 
     if (
-      !user_metadata?.name ||
+      !user_metadata?.full_name ||
       !user_metadata?.schoolId ||
       !user_metadata?.year ||
       !user_metadata?.role
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         create: {
           id: data.user?.id as string,
           email: data.user?.email as string,
-          name: user_metadata.name,
+          name: user_metadata.full_name,
           role: "STUDENT",
           verifiedAt: new Date(),
         },

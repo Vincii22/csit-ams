@@ -26,7 +26,7 @@ export type Admin = BaseUser & {
 export type User = Student | Admin;
 
 export type UserMetadata = {
-  name: string;
+  full_name: string;
   schoolId: string;
   year: number;
   role: Role;

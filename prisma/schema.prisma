@@ -45,10 +45,10 @@ model Position {
 model Student {
   id         String    @id
   schoolId   String
-  courseId   String
+  courseId   String?
   positionId String?
-  year       Int
-  course     Course    @relation(fields: [courseId], references: [id])
+  year       Int?
+  course     Course?   @relation(fields: [courseId], references: [id])
   position   Position? @relation(fields: [positionId], references: [id])
   user       User      @relation(fields: [id], references: [id])
 }
