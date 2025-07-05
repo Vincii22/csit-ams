@@ -15,12 +15,13 @@ const sharedNav: NavItem[][] = [
   [
     { title: "Overview", href: "/dashboard", icon: "house" },
     {
-      title: "Members",
+      title: "Students",
       icon: "users",
       children: [
-        { title: "Student List", href: "/dashboard/members" },
-        { title: "Attendance", href: "/dashboard/members/attendance" },
-        { title: "Sanctions", href: "/dashboard/members/sanctions" },
+        { title: "Student List", href: "/dashboard/students" },
+        { title: "Attendance", href: "/dashboard/students/attendance" },
+        { title: "Sanctions", href: "/dashboard/students/sanctions" },
+        { title: "Clearance", href: "/dashboard/students/clearance" },
       ],
     },
     {

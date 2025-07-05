@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/lib/state/auth.store";
 
-export default function StudentDashboard() {
+export default function StudentView() {
   return (
     <button
       onClick={() => {

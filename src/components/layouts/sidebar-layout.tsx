@@ -29,26 +29,28 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
   if (!user) return;
 
   return (
-    <div className="grid grid-rows-[fit-content(100%)_1fr] grid-cols-[fit-content(100%)_1fr] min-h-svh overflow-hidden">
-      <header className="flex justify-between items-center border-b border-border col-span-2 h-14 px-4">
-        <Link
-          href="/dashboard"
-          className="flex justify-center gap-2 text-xl font-semibold md:justify-start"
-        >
-          <MessageCircleCode size={IconSizes.XL} />
-          Kumsociety
-        </Link>
-        <div className="flex gap-2 items-center">
-          <FeedbackButton />
-          <div className="border border-border rounded-3xl">
-            <HelpButton />
-            <NotificationButton />
+    <div className="h-screen w-screen overflow-hidden">
+      <div className="grid grid-rows-[fit-content(100%)_1fr] grid-cols-[fit-content(100%)_1fr] h-full w-full overflow-hidden">
+        <header className="flex justify-between items-center border-b border-border col-span-2 h-14 px-4">
+          <Link
+            href="/dashboard"
+            className="flex justify-center gap-2 text-xl font-semibold md:justify-start"
+          >
+            <MessageCircleCode size={IconSizes.XL} />
+            Kumsociety
+          </Link>
+          <div className="flex gap-2 items-center">
+            <FeedbackButton />
+            <div className="border border-border rounded-3xl">
+              <HelpButton />
+              <NotificationButton />
+            </div>
+            <Avatar user={user} />
           </div>
-          <Avatar user={user} />
-        </div>
-      </header>
-      <Sidebar />
-      <main className="overflow-y-scroll">{children}</main>
+        </header>
+        <Sidebar />
+        <main className="h-full w-full overflow-y-auto">{children}</main>
+      </div>
     </div>
   );
 }

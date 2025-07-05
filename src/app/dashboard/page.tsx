@@ -2,9 +2,9 @@
 
 import { useAuthStore } from "@/lib/state/auth.store";
 
-import AdminDashboard from "./_admin/view";
-import StudentDashboard from "./_student/view";
-import OfficerDashboard from "./_officer/view";
+import AdminView from "./_views/admin";
+import OfficerView from "./_views/officer";
+import StudentView from "./_views/student";
 import Loader from "@/components/ui/loader";
 
 export default function DashboardPage() {
@@ -13,11 +13,11 @@ export default function DashboardPage() {
 
   switch (user.role.toLowerCase()) {
     case "admin":
-      return <AdminDashboard />;
+      return <AdminView />;
     case "officer":
-      return <OfficerDashboard />;
+      return <OfficerView />;
     case "student":
-      return <StudentDashboard />;
+      return <StudentView />;
     default:
       return (
         <div className="flex h-screen items-center justify-center">
