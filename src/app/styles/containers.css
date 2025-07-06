@@ -1,3 +1,19 @@
 .section-content {
   @apply py-4;
 }
+
+.p-sm {
+  @apply p-1;
+}
+
+.p-base {
+  @apply p-2;
+}
+
+.p-md {
+  @apply p-4;
+}
+
+.p-lg {
+  @apply p-5;
+}
