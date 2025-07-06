@@ -1,5 +1,5 @@
 export function TabWrapper({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-col gap-5 overflow-hidden">{children}</div>;
+  return <div className="grid gap-5 overflow-hidden">{children}</div>;
 }
 
 export function TabSection({ title, desc }: { title?: string; desc?: string }) {
@@ -15,7 +15,7 @@ export function TabSection({ title, desc }: { title?: string; desc?: string }) {
 }
 
 export function TabGrid({ children }: { children: React.ReactNode }) {
-  return <div className="px-5 grid grid-cols-[30%_70%] mb-8">{children}</div>;
+  return <div className="px-5 grid grid-cols-[40%_60%] pb-9">{children}</div>;
 }
 
 export function TabField({ label, desc }: { label?: string; desc?: string }) {
