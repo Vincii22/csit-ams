@@ -12,7 +12,7 @@ export default function ErrorPage() {
 
   const status = parseInt(params.get("status") ?? "777", 10);
   const message = decodeURIComponent(
-    params.get("message") ?? "Di ko rin alam eh",
+    params.get("message") ?? "Di ko rin alam eh"
   );
 
   const errorInfo = HTTP_STATUS[status as keyof typeof HTTP_STATUS] ?? {
@@ -73,10 +73,10 @@ export default function ErrorPage() {
           {action === "go-back"
             ? "Go back"
             : action === "sign-in"
-              ? "Sign in"
-              : action === "dashboard"
-                ? "Back to dashboard"
-                : "Try again"}
+            ? "Sign in"
+            : action === "dashboard"
+            ? "Back to dashboard"
+            : "Try again"}
         </Button>
       )}
     </div>
