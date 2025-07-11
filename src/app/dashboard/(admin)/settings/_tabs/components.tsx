@@ -1,15 +1,32 @@
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import React from "react";
+import { map } from "zod";
+
 export function TabWrapper({ children }: { children: React.ReactNode }) {
   return <div className="grid gap-5 overflow-hidden">{children}</div>;
 }
 
-export function TabSection({ title, desc }: { title?: string; desc?: string }) {
+export function TabSection({
+  title,
+  desc,
+  actions,
+}: {
+  title?: string;
+  desc?: string;
+  actions?: React.ReactNode[];
+}) {
   return (
-    <div className="px-5">
-      <h2 className="text-xl font-semibold mb-1">{title ?? "Test field"}</h2>
-      <p className="text-muted-foreground">
-        {desc ??
-          "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Enim, voluptate?"}{" "}
-      </p>
+    <div className="flex px-5 justify-between items-center">
+      <div>
+        <h2 className="text-xl font-semibold mb-1">{title ?? "Test field"}</h2>
+        <p className="text-muted-foreground">
+          {desc ??
+            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Enim, voluptate?"}{" "}
+        </p>
+      </div>
+
+      <div className="flex gap-8">{actions?.map((action) => action)}</div>
     </div>
   );
 }

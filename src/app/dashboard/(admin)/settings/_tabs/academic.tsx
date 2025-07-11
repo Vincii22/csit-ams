@@ -12,16 +12,38 @@ import {
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useSettingStore } from "../store";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+function AutoSetSwitch() {
+  const { setAutoSet, autoSet } = useSettingStore();
+
+  return (
+    <div className="flex gap-2">
+      <Switch id="auto_set" checked={autoSet} onCheckedChange={setAutoSet} />
+      <Label htmlFor="auto_set">Auto Set</Label>
+    </div>
+  );
+}
 
 export default function AcademicTab() {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date>();
+
+  const { autoSet } = useSettingStore();
 
   return (
     <TabWrapper>
       <TabSection
         title="Academic Period"
         desc="Update the active academic year and semester"
+        actions={[<AutoSetSwitch />]}
       />
       <Separator />
 
@@ -30,15 +52,38 @@ export default function AcademicTab() {
           label="Current academic year"
           desc="Set the current academic year"
         />
-        <div className="grid">
-          <Input
-            type="text"
-            placeholder="A.Y 2024-2025"
-            className="max-w-xs mb-4"
-          />
-          <Button size="sm" type="button" className="primary-btn w-fit">
-            Save changes
-          </Button>
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger disabled={autoSet}>
+              <Button
+                variant={"outline"}
+                disabled={autoSet}
+                className="flex justify-between w-[20rem]"
+              >
+                <span>S.Y. 2025-2026</span>
+                <ChevronDownIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <div className="flex">
+                <Calendar
+                  mode="single"
+                  numberOfMonths={1}
+                  // selected={date}
+                  // onSelect={setDate}
+                  className="rounded-tl-lg rounded-bl-lg border shadow-sm"
+                />
+                <Calendar
+                  mode="single"
+                  numberOfMonths={1}
+                  defaultMonth={date}
+                  // selected={date}
+                  // onSelect={setDate}
+                  className="rounded-tr-lg rounded-br-lg border shadow-sm"
+                />
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </TabGrid>
 
@@ -47,9 +92,12 @@ export default function AcademicTab() {
           label="Current academic semester"
           desc="Switch to the next semester"
         />
-        <Button type="button" size="sm" variant="destructive" className="w-fit">
-          Change to second semester
-        </Button>
+        <Input
+          type="text"
+          value={"First Semester"}
+          className="max-w-xs mb-4"
+          disabled
+        />
       </TabGrid>
       <TabGrid>
         <TabField
