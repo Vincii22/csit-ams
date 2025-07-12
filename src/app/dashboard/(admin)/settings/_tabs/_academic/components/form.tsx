@@ -6,10 +6,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TabField, TabGrid, TabSection } from "../components";
+import { TabField, TabGrid, TabSection } from "../../components";
 import { Button } from "@/components/ui/button";
 import { ChevronDownIcon, Loader2 } from "lucide-react";
-import { useSettingStore } from "../../store";
+import { useSettingStore } from "../../../store";
 import {
   Form,
   FormControl,
@@ -22,8 +22,8 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateAcademicYear } from "./action";
-import { getCurrentAcademicYear } from "../../action";
+import { updateAcademicYear } from "../action";
+import { getCurrentAcademicYear } from "../../../action";
 import { useState } from "react";
 
 export const academicYearSchema = z.object({
@@ -66,8 +66,8 @@ function AcademicForm() {
       });
     } else {
       const { academicYear, semester } = await getCurrentAcademicYear();
-      setCurrentAY(academicYear as string);
-      setCurrentSem(semester as string);
+      setCurrentAY(academicYear!);
+      setCurrentSem(semester!);
     }
     setLoading(false);
   }

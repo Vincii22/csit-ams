@@ -1,7 +1,7 @@
 "use server";
 
 import z from "zod";
-import { academicYearSchema } from "./form";
+import { academicYearSchema } from "./components/form";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -43,6 +43,51 @@ export async function updateAcademicYear({
 
     return { success: true, status: 204 };
   } catch (error) {
-    return { success: false, status: 400, error: error as Error };
+    return {
+      success: false,
+      status: 400,
+      error: new Error(`${academic_year} is already existing`),
+    };
+  }
+}
+
+export async function updateSemester({
+  semester,
+}: {
+  semester: "FIRST_SEMESTER" | "SECOND_SEMESTER";
+}) {
+  try {
+    await prisma.$transaction(async (tx) => {
+      const ay = await tx.academicYear.findFirst({
+        orderBy: {
+          startDate: "desc",
+        },
+      });
+
+      if (!ay) {
+        throw new Error("No active academic year yet");
+      }
+
+      await tx.academicYearSemester.create({
+        data: {
+          academicYearId: ay.id,
+          semester,
+        },
+      });
+    });
+
+    return { success: true, status: 204, current_semester: semester };
+  } catch (err) {
+    const error = err as Error;
+
+    if (error.name) {
+      return {
+        success: false,
+        status: 409,
+        error: new Error("Unable to switch back to first semester"),
+      };
+    }
+
+    return { success: false, status: 409, error };
   }
 }

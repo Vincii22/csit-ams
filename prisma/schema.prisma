@@ -127,6 +127,7 @@ model AcademicYearSemester {
   sanctions           Sanction[]
   studentAcademicYear StudentAcademicYear[]
 
+  @@unique([academicYearId, semester])
   @@map("academic_year_semester")
 }
 

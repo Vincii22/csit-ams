@@ -5,22 +5,13 @@ import { TabField, TabGrid, TabSection, TabWrapper } from "../components";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useSettingStore } from "../../store";
-import AcademicForm from "./form";
+import AcademicForm from "./components/form";
 import { Button } from "@/components/ui/button";
-
-function AutoSetSwitch() {
-  const { setAutoSet, autoSet } = useSettingStore();
-
-  return (
-    <div className="flex gap-2">
-      <Switch id="auto_set" checked={autoSet} onCheckedChange={setAutoSet} />
-      <Label htmlFor="auto_set">Auto Set</Label>
-    </div>
-  );
-}
+import SemesterButton from "./components/semester-button";
+import AutoSetSwitch from "./components/autoset-switch";
 
 export default function AcademicTab() {
-  const { autoSet, currentAY, currentSem } = useSettingStore();
+  const { currentAY, currentSem } = useSettingStore();
 
   return (
     <TabWrapper>
@@ -59,11 +50,8 @@ export default function AcademicTab() {
 
       <TabGrid>
         <TabField label="Set Semester" desc="Set the current academic year" />
-        <div className="flex gap-2">
-          <Button variant={"outline"} className="w-[20rem]" disabled={autoSet}>
-            Switch to Second Sem
-          </Button>
-        </div>
+
+        <SemesterButton />
       </TabGrid>
     </TabWrapper>
   );

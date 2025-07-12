@@ -3,11 +3,11 @@ import { create } from "zustand";
 interface SettingStore {
   autoSet: boolean;
   currentAY?: string;
-  currentSem?: string;
+  currentSem?: "FIRST_SEMESTER" | "SECOND_SEMESTER";
 
   setAutoSet: (autoSet: boolean) => void;
   setCurrentAY: (ay: string) => void;
-  setCurrentSem: (sem: string) => void;
+  setCurrentSem: (sem: "FIRST_SEMESTER" | "SECOND_SEMESTER") => void;
 }
 
 export const useSettingStore = create<SettingStore>((set) => ({
