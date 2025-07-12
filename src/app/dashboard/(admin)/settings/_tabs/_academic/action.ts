@@ -84,7 +84,7 @@ export async function updateSemester({
       return {
         success: false,
         status: 409,
-        error: new Error("Unable to switch back to first semester"),
+        error: new Error("Unable to switch semesters"),
       };
     }
 
