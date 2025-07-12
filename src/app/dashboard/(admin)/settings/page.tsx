@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GeneralTab from "./_tabs/general";
-import AcademicTab from "./_tabs/academic";
+import AcademicTab from "./_tabs/_academic/tab";
 
 export default function SettingsPage() {
   return (

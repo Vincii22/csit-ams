@@ -26,7 +26,11 @@ export function TabSection({
         </p>
       </div>
 
-      <div className="flex gap-8">{actions?.map((action) => action)}</div>
+      <div className="flex gap-8">
+        {actions?.map((action, i) => (
+          <div key={i}>{action}</div>
+        ))}
+      </div>
     </div>
   );
 }
