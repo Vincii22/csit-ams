@@ -44,6 +44,11 @@ enum ClearanceStatus {
   REJECTED
 }
 
+enum Semester {
+  FIRST_SEMESTER @map("First Semester")
+  SECOND_SEMESTER @map("Second Semester")
+}
+
 model User {
   id         String   @id
   name       String
@@ -106,62 +111,49 @@ model AcademicYear {
 
   AcademicYearSemester AcademicYearSemester[]
 
+  @@unique([label])
   @@map("academic_year")
 }
 
-model Semester {
-  id    String @id @default(uuid())
-  label String
-
-  AcademicYearSemester AcademicYearSemester[]
-
-  @@map("semester")
-}
-
 model AcademicYearSemester {
+  id String @id @default(uuid())
   academicYearId String
-  semesterId     String
+  semester Semester
 
   academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
-  semester     Semester     @relation(fields: [semesterId], references: [id])
-
   fees                Fee[]
   events              Event[]
   clearances          Clearance[]
   sanctions           Sanction[]
   studentAcademicYear StudentAcademicYear[]
 
-  @@id([academicYearId, semesterId])
   @@map("academic_year_semester")
 }
 
 model StudentAcademicYear {
   studentId      String
-  academicYearId String
-  semesterId     String
+  academicYearSemesterId String
 
   student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  academicYearSemester AcademicYearSemester @relation(fields: [academicYearId, semesterId], references: [academicYearId, semesterId], onDelete: Cascade)
+  academicYearSemester AcademicYearSemester @relation(fields: [academicYearSemesterId], references: [id], onDelete: Cascade)
 
-  @@unique([studentId, academicYearId, semesterId])
+  @@unique([studentId, academicYearSemesterId])
   @@map("student_academic_year_semester")
 }
 
 model Fee {
   id          String    @id @default(uuid())
-  ayId        String
-  semId       String
+  academicYearSemesterId String
   description String
   amount      Decimal
   isArchived  Boolean?
   archivedAt  DateTime?
   createdAt   DateTime  @default(now())
 
-  academicYearSemester AcademicYearSemester @relation(fields: [ayId, semId], references: [academicYearId, semesterId], onDelete: Cascade)
+  academicYearSemester AcademicYearSemester @relation(fields: [academicYearSemesterId], references: [id], onDelete: Cascade)
 
   finances Finance[]
 
-  @@index([ayId, semId])
   @@map("fee")
 }
 
@@ -186,8 +178,7 @@ model Finance {
 
 model Event {
   id          String    @id @default(uuid())
-  ayId        String
-  semId       String
+  academicYearSemesterId String
   type        EventType
   description String
   startTime   DateTime
@@ -198,11 +189,10 @@ model Event {
   archivedAt  DateTime?
   createdAt   DateTime  @default(now())
 
-  academicYearSemester AcademicYearSemester @relation(fields: [ayId, semId], references: [academicYearId, semesterId], onDelete: Cascade)
+  academicYearSemester AcademicYearSemester @relation(fields: [academicYearSemesterId], references: [id], onDelete: Cascade)
 
   attendances Attendance[]
 
-  @@index([ayId, semId])
   @@map("event")
 }
 
@@ -231,8 +221,7 @@ model Sanction {
   id             String    @id @default(uuid())
   studentId      String
   attendanceId   String
-  ayId           String
-  semId          String
+  academicYearSemesterId String
   requiredAction String
   note           String?
   isArchived     Boolean?
@@ -241,18 +230,16 @@ model Sanction {
 
   student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
   attendance           Attendance           @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
-  academicYearSemester AcademicYearSemester @relation(fields: [ayId, semId], references: [academicYearId, semesterId], onDelete: Cascade)
+  academicYearSemester AcademicYearSemester @relation(fields: [academicYearSemesterId], references: [id], onDelete: Cascade)
 
   @@index([studentId])
-  @@index([ayId, semId])
   @@map("sanction")
 }
 
 model Clearance {
   id           String          @id @default(uuid())
   studentId    String
-  ayId         String
-  semId        String
+  academicYearSemesterId String
   reviewedById String?
   status       ClearanceStatus
   isArchived   Boolean?
@@ -262,9 +249,8 @@ model Clearance {
 
   student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
   reviewedBy           User?                @relation(fields: [reviewedById], references: [id], onDelete: SetNull)
-  academicYearSemester AcademicYearSemester @relation(fields: [ayId, semId], references: [academicYearId, semesterId])
+  academicYearSemester AcademicYearSemester @relation(fields: [academicYearSemesterId], references: [id])
 
-  @@unique([studentId, ayId, semId])
   @@index([studentId])
   @@map("clearance")
 }

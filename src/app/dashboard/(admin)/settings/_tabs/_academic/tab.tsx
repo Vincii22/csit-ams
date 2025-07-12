@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useSettingStore } from "../../store";
 import AcademicForm from "./form";
+import { Button } from "@/components/ui/button";
 
 function AutoSetSwitch() {
   const { setAutoSet, autoSet } = useSettingStore();
@@ -19,6 +20,8 @@ function AutoSetSwitch() {
 }
 
 export default function AcademicTab() {
+  const { autoSet, currentAY, currentSem } = useSettingStore();
+
   return (
     <TabWrapper>
       <TabSection
@@ -33,7 +36,10 @@ export default function AcademicTab() {
           label="Current academic year"
           desc="Set the current academic year"
         />
-        <div className="flex gap-2">S.Y. 2025 - 2026</div>
+
+        <Button className="w-[20rem]" variant={"outline"}>
+          {currentAY ?? "No active academic year"}
+        </Button>
       </TabGrid>
 
       <TabGrid>
@@ -41,18 +47,24 @@ export default function AcademicTab() {
           label="Current academic year"
           desc="Set the current academic year"
         />
-        <div className="flex gap-2">Second Semester</div>
+
+        <Button className="w-[20rem]" variant={"outline"}>
+          {currentSem ?? "No active semester"}
+        </Button>
       </TabGrid>
 
       <Separator />
 
-      <TabSection
-        title="Set Academic"
-        desc="Update the active academic year and semester"
-      />
-      <Separator />
-
       <AcademicForm />
+
+      <TabGrid>
+        <TabField label="Set Semester" desc="Set the current academic year" />
+        <div className="flex gap-2">
+          <Button variant={"outline"} className="w-[20rem]" disabled={autoSet}>
+            Switch to Second Sem
+          </Button>
+        </div>
+      </TabGrid>
     </TabWrapper>
   );
 }
