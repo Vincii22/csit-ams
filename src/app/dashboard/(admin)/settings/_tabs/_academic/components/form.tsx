@@ -9,7 +9,7 @@ import {
 import { TabField, TabGrid, TabSection } from "../../components";
 import { Button } from "@/components/ui/button";
 import { ChevronDownIcon, Loader2 } from "lucide-react";
-import { useSettingStore } from "../../../store";
+import { useSettingStore } from "../../../../../../../lib/state/setting.store";
 import {
   Form,
   FormControl,
@@ -25,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { updateAcademicYear } from "../action";
 import { getCurrentAcademicYear } from "../../../action";
 import { useState } from "react";
+import { getAcademicYears } from "@/lib/utils/get-academic-years";
 
 export const academicYearSchema = z.object({
   academic_year: z
@@ -33,18 +34,6 @@ export const academicYearSchema = z.object({
       message: "Academic year must be in format: S.Y. YYYY - YYYY",
     }),
 });
-
-function getAcademicYears(): string[] {
-  let current_year: number = new Date().getFullYear();
-  const academic_years: string[] = [];
-
-  for (let i = 0; i < 5; i++) {
-    academic_years.push(`S.Y. ${current_year} - ${current_year + 1}`);
-    current_year += 1;
-  }
-
-  return academic_years;
-}
 
 function AcademicForm() {
   const { autoSet, setCurrentAY, setCurrentSem } = useSettingStore();

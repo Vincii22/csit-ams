@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useSettingStore } from "../../../store";
+import { useSettingStore } from "../../../../../../../lib/state/setting.store";
 
 function AutoSetSwitch() {
   const { setAutoSet, autoSet } = useSettingStore();

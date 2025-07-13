@@ -1,7 +1,4 @@
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import React from "react";
-import { map } from "zod";
 
 export function TabWrapper({ children }: { children: React.ReactNode }) {
   return <div className="grid gap-5 overflow-hidden">{children}</div>;

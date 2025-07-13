@@ -2,9 +2,7 @@
 
 import { Separator } from "@/components/ui/separator";
 import { TabField, TabGrid, TabSection, TabWrapper } from "../components";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { useSettingStore } from "../../store";
+import { useSettingStore } from "../../../../../../lib/state/setting.store";
 import AcademicForm from "./components/form";
 import { Button } from "@/components/ui/button";
 import SemesterButton from "./components/semester-button";

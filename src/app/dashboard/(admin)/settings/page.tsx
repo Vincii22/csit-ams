@@ -3,22 +3,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GeneralTab from "./_tabs/general";
 import AcademicTab from "./_tabs/_academic/tab";
-import { useLayoutEffect } from "react";
-import { useSettingStore } from "./store";
-import { getCurrentAcademicYear } from "./action";
 
 export default function SettingsPage() {
-  const { setCurrentAY, setCurrentSem } = useSettingStore();
-
-  useLayoutEffect(() => {
-    getCurrentAcademicYear().then(({ academicYear, semester }) => {
-      if (semester && academicYear) {
-        setCurrentAY(academicYear);
-        setCurrentSem(semester);
-      }
-    });
-  }, []);
-
   return (
     <div className=" w-full flex flex-col">
       <h1 className="font-bold text-3xl p-5">Settings</h1>

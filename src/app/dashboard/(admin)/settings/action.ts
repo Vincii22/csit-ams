@@ -15,6 +15,8 @@ export async function getCurrentAcademicYear() {
   });
 
   return {
+    startDate: res?.academicYear.startDate,
+    endDate: res?.academicYear.endDate,
     academicYear: res?.academicYear.label,
     semester: res?.semester,
   };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSettingStore } from "../../../store";
+import { useSettingStore } from "../../../../../../../lib/state/setting.store";
 import { updateSemester } from "../action";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
