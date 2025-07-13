@@ -1,3 +1,5 @@
+"use client";
+
 import { updateAcademicYear } from "@/app/dashboard/(admin)/settings/_tabs/_academic/action";
 import { getCurrentAcademicYear } from "@/app/dashboard/(admin)/settings/action";
 import { useSettingStore } from "@/lib/state/setting.store";
