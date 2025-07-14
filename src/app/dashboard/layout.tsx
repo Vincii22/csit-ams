@@ -2,7 +2,6 @@
 
 import { SidebarLayout } from "@/components/layouts/sidebar-layout";
 import { useAuthStore } from "@/lib/state/auth.store";
-import useAcademic from "@/shared/hooks/use-academic";
 import { useAuth } from "@/shared/hooks/use-auth";
 
 export default function DashboardLayout({
@@ -15,8 +14,6 @@ export default function DashboardLayout({
 
   const { user } = useAuthStore();
   if (!user) return null;
-
-  useAcademic();
 
   switch (user.role.toLowerCase()) {
     case "student":

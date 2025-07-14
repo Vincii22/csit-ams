@@ -35,7 +35,7 @@ function SemesterButton() {
       <Button
         variant={error && !loading ? "destructive" : "outline"}
         className="w-[20rem]"
-        disabled={autoSet}
+        disabled={autoSet || currentSem == "SECOND_SEMESTER" || !currentSem}
         onClick={updateSem}
       >
         {loading ? (
@@ -44,12 +44,7 @@ function SemesterButton() {
             <Loader2 className="animate-spin" />
           </>
         ) : (
-          <>
-            Switch to{" "}
-            {currentSem != "SECOND_SEMESTER"
-              ? "Second Semester"
-              : "First Semester"}
-          </>
+          <>Switch to Second Semester</>
         )}
       </Button>
 

@@ -57,8 +57,9 @@ model User {
   verifiedAt DateTime
 
   student   Student?
-  Clearance Clearance[]
-  Log       Log[]
+  clearance Clearance[]
+  log       Log[]
+  autoSet AutoSet?
 
   @@map("user")
 }
@@ -119,6 +120,7 @@ model AcademicYearSemester {
   id String @id @default(uuid())
   academicYearId String
   semester Semester
+  createdAt DateTime @default(now())
 
   academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
   fees                Fee[]
@@ -267,4 +269,12 @@ model Log {
   user User @relation(fields: [userId], references: [id])
 
   @@map("log")
+}
+
+model AutoSet {
+  id String @id @default(uuid())
+  adminId String @unique
+  autoSet Boolean @default(true)
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
 }

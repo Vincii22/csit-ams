@@ -14,7 +14,7 @@ interface SettingStore {
 }
 
 export const useSettingStore = create<SettingStore>((set) => ({
-  autoSet: localStorage.getItem("autoSet") ? true : false,
+  autoSet: false,
   currentAY: undefined,
   currentSem: undefined,
   startDate: undefined,

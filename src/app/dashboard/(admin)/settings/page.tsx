@@ -3,8 +3,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GeneralTab from "./_tabs/general";
 import AcademicTab from "./_tabs/_academic/tab";
+import useSettings from "@/shared/hooks/use-settings";
 
 export default function SettingsPage() {
+  useSettings();
+
   return (
     <div className=" w-full flex flex-col">
       <h1 className="font-bold text-3xl p-5">Settings</h1>

@@ -23,7 +23,7 @@ import z from "zod";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateAcademicYear } from "../action";
-import { getCurrentAcademicYear } from "../../../action";
+import { getSettingsData } from "../../../action";
 import { useState } from "react";
 import { getAcademicYears } from "@/lib/utils/get-academic-years";
 
@@ -54,7 +54,7 @@ function AcademicForm() {
         message: error.message,
       });
     } else {
-      const { academicYear, semester } = await getCurrentAcademicYear();
+      const { academicYear, semester } = await getSettingsData();
       setCurrentAY(academicYear!);
       setCurrentSem(semester!);
     }
