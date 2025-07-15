@@ -1,7 +1,9 @@
+import Table from "@/components/table";
+
 export default function RolePage() {
   return (
-    <div className="min-h-svh w-full flex justify-center items-center">
-      This page is under construction :)
+    <div className="p-5">
+      <Table />
     </div>
   );
 }
