@@ -24,14 +24,9 @@ const mockStudents = Array.from({ length: 40 }, (_, i) => ({
   courseYear: `BSIT - ${Math.floor(i % 4) + 1}`,
 }));
 
-type ColumnHeader = {
-  name: string;
-  icon?: string;
-};
-
 type TableProps = {
-  columns: ColumnHeader[];
-  rows: [];
+  columns: string[];
+  rows: any[];
   itemsPerPage?: number;
 };
 
