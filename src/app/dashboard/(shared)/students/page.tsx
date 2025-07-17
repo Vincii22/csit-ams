@@ -1,7 +1,9 @@
+import Table from "@/components/table";
+
 export default function StudentsPage() {
   return (
-    <div className="min-h-svh w-full flex justify-center items-center">
-      This page is under construction :)
+    <div className="flex flex-col items-center justify-center p-5 h-full w-full">
+      <Table />
     </div>
   );
 }
