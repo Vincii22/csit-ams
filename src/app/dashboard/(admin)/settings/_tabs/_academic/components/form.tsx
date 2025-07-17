@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TabField, TabGrid, TabSection } from "../../components";
 import { Button } from "@/components/ui/button";
-import { ChevronDownIcon, Loader2 } from "lucide-react";
-import { useSettingStore } from "../../../../../../../lib/state/setting.store";
+import { ChevronDownIcon } from "lucide-react";
+import { useSettingStore } from "@/lib/state/setting.store";
 import {
   Form,
   FormControl,
@@ -26,6 +26,7 @@ import { updateAcademicYear } from "../action";
 import { getSettingsData } from "../../../action";
 import { useState } from "react";
 import { getAcademicYears } from "@/lib/utils/get-academic-years";
+import Loader from "@/components/ui/loader";
 
 export const academicYearSchema = z.object({
   academic_year: z
@@ -63,12 +64,6 @@ function AcademicForm() {
 
   return (
     <>
-      <TabSection
-        title="Update Academic Period"
-        desc="Update the active academic year and semester"
-      />
-      <Separator />
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(submitHandler)}>
           <TabGrid>
@@ -113,15 +108,13 @@ function AcademicForm() {
                 )}
               />
 
-              <Button type="submit" className="w-fit" disabled={autoSet}>
-                {loading ? (
-                  <>
-                    <span>Updating</span>
-                    <Loader2 className="animate-spin" />
-                  </>
-                ) : (
-                  "Save Changes"
-                )}
+              <Button
+                size="sm"
+                type="submit"
+                className="w-fit primary-btn"
+                disabled={autoSet}
+              >
+                {loading ? <Loader /> : "Save Changes"}
               </Button>
             </div>
           </TabGrid>

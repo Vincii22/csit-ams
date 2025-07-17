@@ -3,6 +3,7 @@ import { useSettingStore } from "../../../../../../../lib/state/setting.store";
 import { updateSemester } from "../action";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import Loader from "@/components/ui/loader";
 
 function SemesterButton() {
   const { autoSet, currentSem, setCurrentSem } = useSettingStore();
@@ -34,18 +35,12 @@ function SemesterButton() {
     <div>
       <Button
         variant={error && !loading ? "destructive" : "outline"}
+        size="sm"
         className="w-[20rem]"
         disabled={autoSet || currentSem == "SECOND_SEMESTER" || !currentSem}
         onClick={updateSem}
       >
-        {loading ? (
-          <>
-            <span>Updating</span>
-            <Loader2 className="animate-spin" />
-          </>
-        ) : (
-          <>Switch to Second Semester</>
-        )}
+        {loading ? <Loader /> : <>Switch to Second Semester</>}
       </Button>
 
       {error && !loading && (
