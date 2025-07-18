@@ -8,7 +8,12 @@ export async function fetchUser(email: string): Promise<User | null> {
   const raw = await prisma.user.findUnique({
     where: { email },
     include: {
-      student: true,
+      student: {
+        include: {
+          course: true,
+          position: true,
+        },
+      },
     },
   });
 

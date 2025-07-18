@@ -9,3 +9,7 @@
 .outline-btn {
   @apply border bg-muted/20 !flex items-center gap-2 h-10 px-3 rounded-xl hover:bg-muted/40 transition cursor-pointer;
 }
+
+.ghost-btn {
+  @apply flex items-center gap-1 h-9 px-2 rounded-lg hover:bg-muted/30;
+}
