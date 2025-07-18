@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import {
-  Search,
   Filter,
   SortAsc,
   Plus,
@@ -22,7 +21,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import { IconSizes } from "@/lib/constants";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Input } from "./ui/input";
 import {
@@ -33,6 +31,9 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Separator } from "./ui/separator";
+import SearchBar from "@/shared/components/search-bar";
+import { useSearch } from "@/shared/hooks/use-search";
+import { TbMoodConfuzed } from "react-icons/tb";
 
 type ColumnHeader = {
   label: string;
@@ -43,6 +44,19 @@ type ColumnHeader = {
 type Sort = {
   label: string;
   direction: "asc" | "desc";
+};
+
+type Filter = {
+  label: string;
+  type:
+    | "is"
+    | "isNot"
+    | "contains"
+    | "doesNotContain"
+    | "startsWith"
+    | "endsWith"
+    | "isEmpty"
+    | "isNotEmpty";
 };
 
 type TableProps = {
@@ -56,33 +70,34 @@ export default function Table({
   rows,
   itemsPerPage = 10,
 }: TableProps) {
-  const [filters, setFilters] = useState<string[]>([]);
-  const [isInputSearchFocused, setIsInputSearchFocused] = useState(false);
+  const [filters, setFilters] = useState<Filter[]>([]);
+  const [sorts, setSorts] = useState<Sort[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(rows.length / itemsPerPage);
+  const searchVariables = ["schoolId", "name", "course.abbreviation+year"];
+
+  const { search, setSearch, filteredData } = useSearch(rows, searchVariables, {
+    debounce: 300,
+  });
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = rows.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = filteredData.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   return (
     <div className="flex flex-col h-full w-full">
       <div className="mb-5">
         <h1 className="font-bold text-3xl mb-5">Student List</h1>
-        <div className="flex justify-between items-center gap-3 mb-3">
-          <div
-            className={cn(
-              "transition flex items-center gap-3 border-2 border-border py-2 px-4 rounded-lg w-[25rem]",
-              isInputSearchFocused && "border-muted-foreground",
-            )}
-          >
-            <Search size={IconSizes.XS} className="text-muted-foreground" />
-            <input
-              className="!border-transparent !bg-transparent focus:outline-none w-full"
-              placeholder="Search"
-              onFocus={() => setIsInputSearchFocused(true)}
-              onBlur={() => setIsInputSearchFocused(false)}
-            />
-          </div>
+        <div className="flex justify-between items-center gap-3 mb-5">
+          <SearchBar
+            value={search}
+            onChangeAction={setSearch}
+            placeholder="Search students..."
+          />
+
           <div className="flex items-center gap-2">
             <TableActionPopover type="Filter" columns={columns} />
             <TableActionPopover type="Sort" columns={columns} />
@@ -134,6 +149,17 @@ export default function Table({
         </div>
 
         <div className="bg-muted/10">
+          {paginatedData.length === 0 && (
+            <div className="w-full flex flex-col items-center justify-center gap-1 p-7">
+              <TbMoodConfuzed size={92} strokeWidth={1.8} />
+              <p className="font-bold text-2xl">No results</p>
+              <p className="text-muted-foreground text-sm leading-[1.2] text-center">
+                Try the following variables:
+                <br />
+                {searchVariables.join(", ")}
+              </p>
+            </div>
+          )}
           {paginatedData.map((data, i) => (
             <div key={data.id}>
               <div
