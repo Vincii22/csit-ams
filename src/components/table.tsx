@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import {
   Filter,
+  Trash,
   SortAsc,
   Plus,
   ChevronDown,
@@ -34,6 +35,7 @@ import { Separator } from "./ui/separator";
 import SearchBar from "@/shared/components/search-bar";
 import { useSearch } from "@/shared/hooks/use-search";
 import { TbMoodConfuzed } from "react-icons/tb";
+import { splitByPascalCase } from "@/lib/utils/split-by-pascalcase";
 
 type ColumnHeader = {
   label: string;
@@ -58,6 +60,17 @@ type Filter = {
     | "isEmpty"
     | "isNotEmpty";
 };
+
+const filterTypes = [
+  "is",
+  "isNot",
+  "contains",
+  "doesNotContain",
+  "startsWith",
+  "endsWith",
+  "isEmpty",
+  "isNotEmpty",
+];
 
 type TableProps = {
   columns: ColumnHeader[];
@@ -103,7 +116,7 @@ export default function Table({
             <TableActionPopover type="Sort" columns={columns} />
           </div>
         </div>
-        <div className="flex items-center h-8 gap-3">
+        <div className="flex items-center h-6 gap-3">
           <SortItemButton
             columns={columns}
             sortItems={[
@@ -119,7 +132,7 @@ export default function Table({
             <FilterItemButton filter="Name" />
 
             <Popover>
-              <PopoverTrigger className="ghost-btn !pl-1 text-muted-foreground">
+              <PopoverTrigger className="ghost-btn !pl-1 text-muted-foreground text-sm">
                 <Plus className="size-4" /> Filter
               </PopoverTrigger>
               <PopoverContent
@@ -127,7 +140,7 @@ export default function Table({
                 sideOffset={7}
                 className="!p-3 flex flex-col gap-1 w-fit"
               >
-                <Input className="mb-2" placeholder="Filter by..." />
+                <Input className="mb-2 !h-8" placeholder="Filter by..." />
 
                 {columns.map((column) => renderPopoverLabel(column))}
               </PopoverContent>
@@ -254,7 +267,7 @@ function renderPopoverLabel(column: ColumnHeader) {
           key={`filter-${labels[0]}-btn`}
           size="sm"
           variant="ghost"
-          className="justify-start w-full"
+          className="justify-start w-full text-sm"
         >
           {labels[0]}
         </Button>
@@ -262,7 +275,7 @@ function renderPopoverLabel(column: ColumnHeader) {
           key={`filter-${labels[1]}-btn`}
           size="sm"
           variant="ghost"
-          className="justify-start w-full"
+          className="justify-start w-full text-sm"
         >
           {labels[1]}
         </Button>
@@ -275,7 +288,7 @@ function renderPopoverLabel(column: ColumnHeader) {
       key={`filter-${column.variable}-btn`}
       size="sm"
       variant="ghost"
-      className="justify-start w-full"
+      className="justify-start w-full text-sm"
     >
       {column.label}
     </Button>
@@ -305,7 +318,7 @@ function SortItemButton({
 
   return (
     <Popover>
-      <PopoverTrigger className="cursor-pointer h-9 flex items-center bg-blue-950/40 text-blue-400 gap-1.5 px-3 rounded-lg">
+      <PopoverTrigger className="cursor-pointer h-8 flex text-sm items-center bg-blue-950/40 text-blue-400 gap-1.5 px-3 rounded-lg">
         {icon}
         {label}
         <ChevronDown className="size-4" />
@@ -313,7 +326,7 @@ function SortItemButton({
       <PopoverContent
         align="start"
         sideOffset={7}
-        className="!p-3 flex flex-col gap-1 w-fit"
+        className="!p-3 flex flex-col w-fit"
       >
         {sortItems.length > 1 ? (
           sortItems.map((sort, i) => (
@@ -326,6 +339,20 @@ function SortItemButton({
         ) : (
           <SelectSortItemButton columns={columns} sortItem={sortItems[0]} />
         )}
+        <Button
+          size="sm"
+          variant="ghost"
+          className="!text-sm !text-muted-foreground justify-start w-full"
+        >
+          <Plus className="size-4" /> Add sort
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="!text-sm !text-red-400 justify-start w-full"
+        >
+          <Trash className="size-4" /> Clear all
+        </Button>
       </PopoverContent>
     </Popover>
   );
@@ -334,7 +361,7 @@ function SortItemButton({
 function FilterItemButton({ filter }: { filter: string }) {
   return (
     <Popover key={`filter-${filter}-btn`}>
-      <PopoverTrigger className="outline-btn !h-9 !rounded-lg">
+      <PopoverTrigger className="outline-btn !h-8 text-sm !rounded-lg">
         {filter}
         <ChevronDown className="size-4" />
       </PopoverTrigger>
@@ -344,7 +371,9 @@ function FilterItemButton({ filter }: { filter: string }) {
         className="!p-3 flex flex-col gap-1"
       >
         <div className="flex items-center gap-1 mb-1">
-          <span className="text-muted-foreground">{filter}</span>
+          <span className="text-muted-foreground text-sm uppercase">
+            {filter}
+          </span>
           <Popover>
             <PopoverTrigger className="flex items-center gap-1 text-sm h-6 px-2 rounded-lg hover:bg-muted/30">
               contains
@@ -353,36 +382,22 @@ function FilterItemButton({ filter }: { filter: string }) {
             <PopoverContent
               align="start"
               sideOffset={7}
-              className="!p-2 flex flex-col gap-1 !w-fit"
+              className="!p-2 flex flex-col !w-fit"
             >
-              <Button size="sm" variant="ghost" className="justify-start">
-                Is
-              </Button>
-              <Button size="sm" variant="ghost" className="justify-start">
-                Is not
-              </Button>
-              <Button size="sm" variant="ghost" className="justify-start">
-                Contains
-              </Button>
-              <Button size="sm" variant="ghost" className="justify-start">
-                Does not contain
-              </Button>
-              <Button size="sm" variant="ghost" className="justify-start">
-                Starts with
-              </Button>
-              <Button size="sm" variant="ghost" className="justify-start">
-                Ends with
-              </Button>
-              <Button size="sm" variant="ghost" className="justify-start">
-                Is empty
-              </Button>
-              <Button size="sm" variant="ghost" className="justify-start">
-                Is not empty
-              </Button>
+              {filterTypes.map((type) => (
+                <Button
+                  key={`filter-${type}-btn`}
+                  size="sm"
+                  variant="ghost"
+                  className="justify-start lowercase text-sm"
+                >
+                  {splitByPascalCase(type).join(" ")}
+                </Button>
+              ))}
             </PopoverContent>
           </Popover>
         </div>
-        <Input placeholder="Type a value" />
+        <Input className="!h-8" placeholder="Type a value" />
       </PopoverContent>
     </Popover>
   );
@@ -398,7 +413,7 @@ function SelectSortItemButton({
   return (
     <div className="flex items-center gap-2 mb-2">
       <Select defaultValue={sortItem.label.toLowerCase()}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[130px] !h-8">
           <SelectValue placeholder="Select column" />
         </SelectTrigger>
         <SelectContent>
@@ -436,7 +451,7 @@ function SelectSortItemButton({
         </SelectContent>
       </Select>
       <Select defaultValue={sortItem.direction}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[130px] !h-8">
           <SelectValue placeholder="Direction" />
         </SelectTrigger>
         <SelectContent>
@@ -444,7 +459,7 @@ function SelectSortItemButton({
           <SelectItem value="desc">Descending</SelectItem>
         </SelectContent>
       </Select>
-      <X className="size-4 cursor-pointer text-muted-foreground hover:text-destructive transition" />
+      <X className="size-4 cursor-pointer text-muted-foreground hover:text-red-400 transition" />
     </div>
   );
 }
@@ -460,19 +475,20 @@ function TableActionPopover({
     <Popover>
       <PopoverTrigger className="outline-btn">
         {type.toLowerCase() === "filter" ? (
-          <Filter className="size-4.5" />
+          <Filter className="size-4" />
         ) : (
-          <SortAsc className="size-4.5" />
+          <SortAsc className="size-4" />
         )}
         {type}
       </PopoverTrigger>
       <PopoverContent
         align="end"
         sideOffset={7}
-        className="!p-3 flex flex-col gap-1 w-fit"
+        className="!p-3 flex flex-col w-[10rem]"
       >
-        <Input className="mb-2" placeholder="Filter by..." />
-
+        <span className="text-muted-foreground text-sm uppercase mb-2.5">
+          {type.toLowerCase() === "filter" ? "Filter by" : "Sort by"}
+        </span>
         {columns.map((column) => renderPopoverLabel(column))}
       </PopoverContent>
     </Popover>
