@@ -1,3 +1,5 @@
+"use server";
+
 import { normalizeUser } from "@/lib/utils/normalize-user";
 import prisma from "@/lib/prisma";
 import { User } from "../types";

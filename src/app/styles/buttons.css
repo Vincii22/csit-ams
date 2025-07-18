@@ -5,3 +5,7 @@
 .primary-btn {
   @apply bg-blue-900 border border-blue-700 text-white hover:bg-blue-800 hover:border-blue-600 transition;
 }
+
+.outline-btn {
+  @apply border bg-muted/20 !flex items-center gap-2 h-10 px-3 rounded-xl hover:bg-muted/40 transition cursor-pointer;
+}

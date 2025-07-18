@@ -1,18 +1,14 @@
-"use client";
-
 import Table from "@/components/table";
 import { fetchStudents } from "@/lib/db/fetch-students";
-import { User } from "@/lib/types";
-import { useEffect, useState } from "react";
 
-export default function StudentsPage() {
-  const [students, setStudents] = useState<User[]>([]);
+const columns = [
+  { label: "ID", variable: "schoolId" },
+  { label: "Name", variable: "name" },
+  { label: "Course & Year", variable: ["course", "year"] },
+];
 
-  useEffect(() => {
-    fetchStudents().then(setStudents).catch(console.error);
-  }, []);
-
-  const columns = ["Name", "Email", "Course & Year"];
+export default async function StudentsPage() {
+  const students = await fetchStudents();
 
   return (
     <div className="flex flex-col items-center justify-center p-5 h-full w-full">

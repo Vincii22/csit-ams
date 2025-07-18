@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
 import { Search, Filter, SortAsc } from "lucide-react";
 import {
   Pagination,
@@ -17,29 +16,30 @@ import { IconSizes } from "@/lib/constants";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Input } from "./ui/input";
 
-const mockStudents = Array.from({ length: 40 }, (_, i) => ({
-  id: i + 1,
-  name: `Student ${i + 1}`,
-  email: `student${i + 1}@dwc-legazpi.edu`,
-  courseYear: `BSIT - ${Math.floor(i % 4) + 1}`,
-}));
+type ColumnHeader = {
+  label: string;
+  variable: string | string[];
+};
 
 type TableProps = {
-  columns: string[];
+  columns: ColumnHeader[];
   rows: any[];
   itemsPerPage?: number;
 };
 
-export default function Table({ itemsPerPage = 10 }: TableProps) {
+export default function Table({
+  columns,
+  rows,
+  itemsPerPage = 10,
+}: TableProps) {
   const [isInputSearchFocused, setIsInputSearchFocused] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(mockStudents.length / itemsPerPage);
+  const totalPages = Math.ceil(rows.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = mockStudents.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  );
+  const paginatedData = rows.slice(startIndex, startIndex + itemsPerPage);
+
+  console.log(rows);
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -62,11 +62,9 @@ export default function Table({ itemsPerPage = 10 }: TableProps) {
           </div>
           <div className="flex items-center gap-2">
             <Popover>
-              <PopoverTrigger>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Filter className="size-4.5" />
-                  Filter
-                </Button>
+              <PopoverTrigger className="outline-btn">
+                <Filter className="size-4.5" />
+                Filter
               </PopoverTrigger>
               <PopoverContent
                 align="end"
@@ -75,22 +73,23 @@ export default function Table({ itemsPerPage = 10 }: TableProps) {
               >
                 <Input className="mb-1.5" placeholder="Filter by..." />
 
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="justify-start w-full"
-                >
-                  ID
-                </Button>
+                {columns.map((column) => (
+                  <Button
+                    key={`filter-${column.variable}-btn`}
+                    size="sm"
+                    variant="ghost"
+                    className="justify-start w-full"
+                  >
+                    {column.label}
+                  </Button>
+                ))}
               </PopoverContent>
             </Popover>
 
             <Popover>
-              <PopoverTrigger>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <SortAsc className="size-4.5" />
-                  Sort
-                </Button>
+              <PopoverTrigger className="outline-btn">
+                <SortAsc className="size-4.5" />
+                Sort
               </PopoverTrigger>
               <PopoverContent
                 align="end"
@@ -99,13 +98,16 @@ export default function Table({ itemsPerPage = 10 }: TableProps) {
               >
                 <Input className="mb-1.5" placeholder="Sort by..." />
 
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="justify-start w-full"
-                >
-                  ID
-                </Button>
+                {columns.map((column) => (
+                  <Button
+                    key={`sort-${column.variable}-btn`}
+                    size="sm"
+                    variant="ghost"
+                    className="justify-start w-full"
+                  >
+                    {column.label}
+                  </Button>
+                ))}
               </PopoverContent>
             </Popover>
           </div>
@@ -117,15 +119,16 @@ export default function Table({ itemsPerPage = 10 }: TableProps) {
           className="grid text-start font-bold uppercase py-2 px-4 border-b border-border bg-muted/25"
           style={{ gridTemplateColumns: "10% repeat(2, 1fr) 15%" }}
         >
-          <h4>ID</h4>
-          <h4>Name</h4>
-          <h4>Course & Year</h4>
+          {columns.map((column) => (
+            <h4 key={`header-${column.variable}`}>{column.label}</h4>
+          ))}
+
           <h4>Actions</h4>
         </div>
 
         <div className="bg-muted/10">
-          {paginatedData.map((student, i) => (
-            <div key={student.id}>
+          {paginatedData.map((data, i) => (
+            <div key={data.id}>
               <div
                 className={cn(
                   "grid text-start items-center py-3 px-4",
@@ -133,16 +136,22 @@ export default function Table({ itemsPerPage = 10 }: TableProps) {
                 )}
                 style={{ gridTemplateColumns: "10% repeat(2, 1fr) 15%" }}
               >
-                <div>
-                  <h3>{student.id}</h3>
-                </div>
-                <div>
-                  <h2 className="font-bold text-lg">{student.name}</h2>
-                  <h3 className="text-muted-foreground">{student.email}</h3>
-                </div>
-                <div>
-                  <h3>{student.courseYear}</h3>
-                </div>
+                {columns.map((column) => {
+                  if (column.label.toLowerCase().trim() === "name") {
+                    return (
+                      <div key={`row-${column.variable}`}>
+                        <h2 className="font-bold text-lg">{data.name}</h2>
+                        <h3 className="text-muted-foreground">{data.email}</h3>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div key={`row-${column.variable}`}>
+                        <h3>{renderColumnData(column, data)}</h3>
+                      </div>
+                    );
+                  }
+                })}
                 <div className="flex items-center gap-3">
                   <Button size="sm" className="primary-btn">
                     Edit
@@ -188,4 +197,12 @@ export default function Table({ itemsPerPage = 10 }: TableProps) {
       </Pagination>
     </div>
   );
+}
+
+function renderColumnData(column: ColumnHeader, data: any) {
+  if (Array.isArray(column.variable)) {
+    return `${data[column.variable[0]]} - ${data[column.variable[1]]}`;
+  }
+
+  return data[column.variable];
 }
