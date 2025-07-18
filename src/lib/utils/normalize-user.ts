@@ -19,9 +19,9 @@ export function normalizeUser(raw: any): User {
     email: raw.email,
     name: raw.name,
     role: raw.role.toLowerCase() as Role,
-    course: raw.student.courseId as Course,
+    course: raw.student.course as Course,
     year: raw.student.year as YearLevel,
     schoolId: raw.student.schoolId,
-    position: raw.student.positionId as Position | null,
+    position: raw.student.position as Position | null,
   };
 }

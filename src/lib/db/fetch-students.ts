@@ -10,7 +10,12 @@ export async function fetchStudents(): Promise<User[]> {
       role: "STUDENT",
     },
     include: {
-      student: true,
+      student: {
+        include: {
+          course: true,
+          position: true,
+        },
+      },
     },
   });
 

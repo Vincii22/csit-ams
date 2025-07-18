@@ -4,7 +4,7 @@ import { fetchStudents } from "@/lib/db/fetch-students";
 const columns = [
   { label: "ID", variable: "schoolId" },
   { label: "Name", variable: "name" },
-  { label: "Course & Year", variable: ["course", "year"] },
+  { label: "Course & Year", variable: ["course.abbreviation", "year"] },
 ];
 
 export default async function StudentsPage() {

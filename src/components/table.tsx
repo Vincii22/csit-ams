@@ -200,9 +200,15 @@ export default function Table({
 }
 
 function renderColumnData(column: ColumnHeader, data: any) {
+  console.log(data, column);
+
   if (Array.isArray(column.variable)) {
-    return `${data[column.variable[0]]} - ${data[column.variable[1]]}`;
+    return `${getNestedValue(data, column.variable[0])}-${getNestedValue(data, column.variable[1])}`;
   }
 
-  return data[column.variable];
+  return getNestedValue(data, column.variable);
+}
+
+function getNestedValue(obj: any, path: string): any {
+  return path.split(".").reduce((acc, key) => acc?.[key], obj);
 }
