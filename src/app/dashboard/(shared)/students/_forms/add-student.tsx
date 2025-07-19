@@ -1,3 +1,5 @@
+"use client";
+
 import { z } from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,6 +28,7 @@ import Loader from "@/components/ui/loader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { PasswordInput } from "@/app/(auth)/password";
+import { Separator } from "@/components/ui/separator";
 
 export function AddStudentForm({
   className,
@@ -49,9 +52,18 @@ export function AddStudentForm({
 
   return (
     <Form {...form}>
+      <div className="p-5 grid gap-1">
+        <h3 className="font-bold text-xl">Add student</h3>
+        <p className="text-muted-foreground">
+          Fill up the form to add a student
+        </p>
+      </div>
+
+      <Separator />
+
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("flex flex-col gap-10", className)}
+        className={cn("p-5 flex flex-col gap-10", className)}
         {...props}
       >
         {form.formState.errors.root && (

@@ -23,7 +23,7 @@ export type ColumnHeader = {
 
 export type Action = {
   label: string;
-  popover: React.ReactNode;
+  content: React.ReactNode;
   action?: void;
 };
 

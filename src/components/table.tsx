@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Button } from "./ui/button";
 import { FilterIcon, SortAsc, Plus, Ellipsis } from "lucide-react";
 import {
@@ -25,14 +25,22 @@ import { SortItemButton } from "./buttons/sort-item";
 import { FilterItemButton } from "./buttons/filter-item";
 import { useTable } from "@/shared/hooks/use-table";
 import type { Action, ColumnHeader, Filter, Sort } from "@/lib/types";
+import { usePopup } from "@/shared/contexts/popup-context";
 
 type TableProps = {
   tableKey: string;
   columns: ColumnHeader[];
   rows: any[];
   searchKeys: string[];
+
+  canAdd?: boolean;
+  addActionPopup?: () => React.ReactNode;
+
   actions?: Action[];
-  popovers?: React.ReactNode[];
+  defaultPopovers?: {
+    for: string;
+    content: (row: any) => React.ReactNode;
+  }[];
   itemsPerPage?: number;
 };
 
@@ -41,24 +49,35 @@ export default function Table({
   columns,
   rows,
   searchKeys,
+  canAdd = true,
+  addActionPopup,
   actions,
-  popovers,
+  defaultPopovers,
   itemsPerPage = 10,
 }: TableProps) {
   const defaultActions: Action[] = [
-    { label: "Edit", popover: null },
-    { label: "Archive", popover: null },
+    { label: "Edit", content: null },
+    { label: "Archive", content: null },
   ];
 
   const finalActions = useMemo(() => {
     const base = actions ?? defaultActions;
 
-    return base.map((action, i) => ({
-      ...action,
-      popover: popovers?.[i] ?? action.popover ?? null,
-    }));
+    return base.map((action) => {
+      const normalizedLabel = action.label.toLowerCase();
+      const matchedPopover = defaultPopovers?.find(
+        (p) => p.for === normalizedLabel,
+      );
+
+      return {
+        ...action,
+        popover: matchedPopover?.content ?? action.content ?? null,
+      };
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actions, popovers]);
+  }, [actions, defaultPopovers]);
+
+  const { openPopup } = usePopup();
 
   const {
     search,
@@ -127,9 +146,15 @@ export default function Table({
               sortItems={sortItems}
               addSort={addSort}
             />
-            <Button size="sm" className="primary-btn !h-9.5 !rounded-xl">
-              <Plus className="size-4" /> Add
-            </Button>
+            {canAdd && (
+              <Button
+                size="sm"
+                className="primary-btn !h-9.5 !rounded-xl"
+                onClick={() => openPopup("", addActionPopup?.())}
+              >
+                <Plus className="size-4" /> Add
+              </Button>
+            )}
           </div>
         </div>
         {(sortItems.length >= 1 || filters.length >= 1) && (
