@@ -12,7 +12,7 @@ export default async function StudentsPage() {
 
   return (
     <div className="flex flex-col items-center justify-center p-5 h-full w-full">
-      <Table columns={columns} rows={students} />
+      <Table tableKey="studentTable" columns={columns} rows={students} />
     </div>
   );
 }
