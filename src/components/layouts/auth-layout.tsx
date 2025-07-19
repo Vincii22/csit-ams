@@ -1,6 +1,5 @@
 "use client";
 
-import { IconSizes } from "@/lib/constants";
 import { MessageCircleCode } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,7 +21,7 @@ export default function AuthLayout({ form, image }: AuthLayoutProps) {
           href="/"
           className="flex justify-center gap-2 text-xl font-semibold md:justify-start"
         >
-          <MessageCircleCode size={IconSizes.XL} />
+          <MessageCircleCode className="size-7" />
           Kumsociety
         </Link>
         <div className="flex flex-1 items-center justify-center">

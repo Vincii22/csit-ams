@@ -1,19 +1,13 @@
+import { Sort } from "@/components/table";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-type SortDirection = "asc" | "desc";
-
-export type TableSort = {
-  label: string;
-  direction: SortDirection;
-};
 
 export type TableFilter = Record<string, string>;
 
 type TableState = {
   search: string;
   filters: TableFilter;
-  sort: TableSort[];
+  sort: Sort[];
   currentPage: number;
 };
 
@@ -22,7 +16,7 @@ type TableStore = {
 
   setSearch: (key: string, value: string) => void;
   setFilter: (key: string, column: string, value: string) => void;
-  setSort: (key: string, sort: TableSort[]) => void;
+  setSort: (key: string, sort: Sort[]) => void;
   setCurrentPage: (key: string, page: number) => void;
 
   resetTable: (key: string) => void;

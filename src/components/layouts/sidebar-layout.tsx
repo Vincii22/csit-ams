@@ -12,7 +12,6 @@ import {
   MessageCircleCode,
 } from "lucide-react";
 import Sidebar from "@/components/sidebar";
-import { IconSizes } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import Avatar from "@/components/avatar";
 import {
@@ -36,7 +35,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
             href="/dashboard"
             className="flex justify-center gap-2 text-xl font-semibold md:justify-start"
           >
-            <MessageCircleCode size={IconSizes.XL} />
+            <MessageCircleCode className="size-7" />
             Kumsociety
           </Link>
           <div className="flex gap-2 items-center">
@@ -151,8 +150,8 @@ function HelpButton() {
         <div className="p-3 grid gap-4">
           <h3 className="font-semibold">Need help in something?</h3>
           <p className="text-sm text-muted-foreground">
-            Stuck on something you can't figure out? You could try these options
-            out.
+            Stuck on something you can&apos;t figure out? You could try these
+            options out.
           </p>
           <div className="grid mt-1 rounded-md border border-border">
             <Button

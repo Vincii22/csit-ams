@@ -1,11 +1,3 @@
-export enum IconSizes {
-  XL = 24,
-  LARGE = 22,
-  MED = 20,
-  SMALL = 18,
-  XS = 16,
-}
-
 export const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
@@ -68,5 +60,4 @@ export const HTTP_STATUS = {
       "The service is temporarily unavailable. Please try again later",
   },
 } as const;
-
 export type HttpStatusCode = keyof typeof HTTP_STATUS;

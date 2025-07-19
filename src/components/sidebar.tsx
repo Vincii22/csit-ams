@@ -4,7 +4,6 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useState, Fragment } from "react";
 import { usePathname } from "next/navigation";
-import { IconSizes } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { getNavItemsForRole, type NavItem } from "@/app/dashboard/_config/nav";
@@ -164,7 +163,7 @@ function SidebarLink({
       title={item.title}
     >
       {item.icon && (
-        <DynamicIcon name={item.icon as IconName} size={IconSizes.SMALL} />
+        <DynamicIcon name={item.icon as IconName} className="size-5" />
       )}
       {collapsed && item.title}
     </Link>
@@ -202,7 +201,7 @@ function SidebarCollapsible({
       >
         <div className="flex items-center gap-3">
           {item.icon && (
-            <DynamicIcon name={item.icon as IconName} size={IconSizes.SMALL} />
+            <DynamicIcon name={item.icon as IconName} className="size-5" />
           )}
           {collapsed && item.title}
         </div>
