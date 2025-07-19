@@ -7,12 +7,14 @@ import { Filter, FilterType, filterTypes } from "@/lib/types";
 
 export function FilterItemButton({
   filters,
-  setFilters,
   filter,
+  removeFilter,
+  updateFilter,
 }: {
   filters: Filter[];
-  setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
   filter: Filter;
+  removeFilter: (key: string) => void;
+  updateFilter: (filterKey: string, updater: (prev: Filter) => Filter) => void;
 }) {
   return (
     <Popover key={`filter-${filter}-popover`}>
@@ -46,20 +48,12 @@ export function FilterItemButton({
                   variant="ghost"
                   className="justify-start lowercase text-sm"
                   disabled={filters.some((f) => f.type === type)}
-                  onClick={() => {
-                    setFilters((prev) => {
-                      const updated = [...prev];
-                      const existingIndex = updated.findIndex(
-                        (f) => f.variable === filter.variable,
-                      );
-
-                      if (existingIndex !== -1) {
-                        updated[existingIndex].type = type;
-                      }
-
-                      return updated;
-                    });
-                  }}
+                  onClick={() =>
+                    updateFilter(filter.key, (prev: Filter) => ({
+                      ...prev,
+                      type,
+                    }))
+                  }
                 >
                   {splitByPascalCase(type).join(" ")}
                 </Button>
@@ -70,43 +64,20 @@ export function FilterItemButton({
         <Input
           className="!h-8 mb-1"
           placeholder="Type a value"
-          value={
-            filters.find((f) => f.variable === filter.variable)?.value ?? ""
+          value={filter.value ?? "rah"}
+          onChange={(e) =>
+            updateFilter(filter.key, (prev: Filter) => ({
+              ...prev,
+              value: e.target.value,
+            }))
           }
-          onChange={(e) => {
-            const inputValue = e.target.value;
-
-            setFilters((prev) => {
-              const updated = [...prev];
-              const existingIndex = updated.findIndex(
-                (f) => f.variable === filter.variable,
-              );
-
-              if (existingIndex !== -1) {
-                updated[existingIndex].value = inputValue;
-              } else {
-                updated.push({
-                  label: filter.label,
-                  variable: filter.variable,
-                  type: filter.type,
-                  value: inputValue,
-                });
-              }
-
-              return updated;
-            });
-          }}
         />
 
         <Button
           size="sm"
           variant="ghost"
           className="!text-sm !text-red-400 justify-start w-full"
-          onClick={() => {
-            setFilters((prev) =>
-              prev.filter((f) => f.variable !== filter.variable),
-            );
-          }}
+          onClick={() => removeFilter(filter.key)}
         >
           <Trash className="size-4" /> Remove filter
         </Button>

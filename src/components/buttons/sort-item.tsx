@@ -27,13 +27,19 @@ import { Button } from "../ui/button";
 import { ColumnHeader, Sort } from "@/lib/types";
 
 export function SortItemButton({
+  columns,
   sortItems,
   setSort,
-  columns,
+  addSort,
+  removeSort,
+  updateSort,
 }: {
   sortItems: Sort[];
-  setSort: React.Dispatch<React.SetStateAction<Sort[]>>;
   columns: ColumnHeader[];
+  setSort: (sort: Sort[]) => void;
+  addSort: (sort: Sort) => void;
+  removeSort: (key: string) => void;
+  updateSort: (sortKey: string, updater: (prev: Sort) => Sort) => void;
 }) {
   const hasMultiple = sortItems.length > 1;
 
@@ -60,8 +66,8 @@ export function SortItemButton({
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const oldIndex = sortItems.findIndex((s) => s.variable === active.id);
-    const newIndex = sortItems.findIndex((s) => s.variable === over.id);
+    const oldIndex = sortItems.findIndex((s) => s.key === active.id);
+    const newIndex = sortItems.findIndex((s) => s.key === over.id);
 
     const newSorted = arrayMove(sortItems, oldIndex, newIndex).map((s, i) => ({
       ...s,
@@ -80,7 +86,7 @@ export function SortItemButton({
       </PopoverTrigger>
       <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
         <PopoverContent
-          key={JSON.stringify(sortItems.map((s) => s.variable))}
+          key={JSON.stringify(sortItems.map((s) => s.key))}
           align="start"
           sideOffset={7}
           className="!p-3 flex flex-col w-fit"
@@ -88,7 +94,7 @@ export function SortItemButton({
           <SortableContext
             items={[...sortItems]
               .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-              .map((s) => s.variable)}
+              .map((s) => s.key)}
             strategy={verticalListSortingStrategy}
           >
             {[...sortItems]
@@ -96,10 +102,10 @@ export function SortItemButton({
               .map((sort, i) => (
                 <SelectSortItemButton
                   key={`select-sortItem-${i}`}
-                  sortItems={sortItems}
-                  setSort={setSort}
                   columns={columns}
                   sort={sort}
+                  removeSort={removeSort}
+                  updateSort={updateSort}
                 />
               ))}
           </SortableContext>
@@ -116,7 +122,7 @@ export function SortItemButton({
                 Sort by
               </span>
               {columns.map((column) =>
-                renderPopoverLabel("sort", column, sortItems, setSort),
+                renderPopoverLabel("sort", column, sortItems, addSort),
               )}
             </PopoverContent>
           </Popover>

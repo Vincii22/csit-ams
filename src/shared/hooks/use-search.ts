@@ -1,17 +1,18 @@
+import { getValueByPath } from "@/lib/utils/get-value-by-path";
 import { useEffect, useMemo, useState } from "react";
-
-function getNestedValue(obj: any, path: string): any {
-  return path.split(".").reduce((acc, key) => acc?.[key], obj);
-}
 
 type Options = {
   debounce?: number;
 };
 
-export function useSearch<T>(data: T[], keys: string[], options?: Options) {
-  const [search, setSearchState] = useState("");
+export function useSearch<T>(
+  data: T[],
+  keys: string[],
+  search: string,
+  setSearch: (value: string) => void,
+  options?: Options,
+) {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-
   const debounceTime = options?.debounce ?? 300;
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export function useSearch<T>(data: T[], keys: string[], options?: Options) {
       keys.some((key) => {
         const parts = key.split("+");
         const combined = parts
-          .map((part) => getNestedValue(item, part) ?? "")
+          .map((part) => getValueByPath(item, part) ?? "")
           .join("-")
           .toLowerCase();
 
@@ -38,5 +39,5 @@ export function useSearch<T>(data: T[], keys: string[], options?: Options) {
     );
   }, [debouncedSearch, data, keys]);
 
-  return { search, setSearch: setSearchState, filteredData };
+  return { search, setSearch, filteredData };
 }

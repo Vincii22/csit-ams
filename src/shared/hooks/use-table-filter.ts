@@ -1,4 +1,4 @@
-import { Filter } from "@/components/table";
+import type { Filter } from "@/lib/types";
 import { getValueByPath } from "@/lib/utils/get-value-by-path";
 import { useMemo } from "react";
 
@@ -6,7 +6,7 @@ export function useTableFilter<T>(data: T[], filters: Filter[]) {
   return useMemo(() => {
     return data.filter((item) => {
       return filters.every((filter) => {
-        const field = getValueByPath(item, filter.variable);
+        const field = getValueByPath(item, filter.key);
         const value = filter.value?.toLowerCase() ?? "";
 
         switch (filter.type) {

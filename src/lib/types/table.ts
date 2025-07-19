@@ -13,24 +13,30 @@ export type FilterType = (typeof filterTypes)[number];
 
 export type ColumnHeader = {
   label: string;
-  variable: string | string[];
+  key: string | string[];
   icon?: string;
 
   // for concatenated headers
-  filterable?: { label: string; variable: string }[];
-  sortable?: { label: string; variable: string }[];
+  filterable?: { label: string; key: string }[];
+  sortable?: { label: string; key: string }[];
+};
+
+export type Action = {
+  label: string;
+  popover: React.ReactNode;
+  action?: void;
 };
 
 export type Sort = {
   label: string;
-  variable: string;
+  key: string;
   direction: "asc" | "desc";
   order: number;
 };
 
 export type Filter = {
-  variable: string;
   label: string;
-  value?: string;
+  key: string;
   type: FilterType;
+  value?: string;
 };

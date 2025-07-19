@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Button } from "./ui/button";
-import { FilterIcon, SortAsc, Plus } from "lucide-react";
+import { FilterIcon, SortAsc, Plus, Ellipsis } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -21,14 +21,18 @@ import { TbMoodConfuzed } from "react-icons/tb";
 import { getValueByPath } from "@/lib/utils/get-value-by-path";
 import { useTableFilter } from "@/shared/hooks/use-table-filter";
 import { useTableSort } from "@/shared/hooks/use-table-sort";
-import { ColumnHeader, Filter, Sort } from "@/lib/types";
 import { SortItemButton } from "./buttons/sort-item";
 import { FilterItemButton } from "./buttons/filter-item";
+import { useTable } from "@/shared/hooks/use-table";
+import type { Action, ColumnHeader, Filter, Sort } from "@/lib/types";
 
 type TableProps = {
   tableKey: string;
   columns: ColumnHeader[];
   rows: any[];
+  searchKeys: string[];
+  actions?: Action[];
+  popovers?: React.ReactNode[];
   itemsPerPage?: number;
 };
 
@@ -36,22 +40,53 @@ export default function Table({
   tableKey,
   columns,
   rows,
+  searchKeys,
+  actions,
+  popovers,
   itemsPerPage = 10,
 }: TableProps) {
-  const [filters, setFilters] = useState<Filter[]>([]);
-  const [sortItems, setSort] = useState<Sort[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const defaultActions: Action[] = [
+    { label: "Edit", popover: null },
+    { label: "Archive", popover: null },
+  ];
 
-  const searchVariables = ["schoolId", "name", "course.abbreviation+year"];
+  const finalActions = useMemo(() => {
+    const base = actions ?? defaultActions;
+
+    return base.map((action, i) => ({
+      ...action,
+      popover: popovers?.[i] ?? action.popover ?? null,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actions, popovers]);
 
   const {
     search,
     setSearch,
-    filteredData: searchResults,
-  } = useSearch(rows, searchVariables, { debounce: 300 });
+    filters,
+    addFilter,
+    removeFilter,
+    updateFilter,
+    sort: sortItems,
+    setSort,
+    addSort,
+    removeSort,
+    updateSort,
+    currentPage,
+    setCurrentPage,
+  } = useTable(tableKey);
+
+  const { filteredData: searchResults } = useSearch(
+    rows,
+    searchKeys,
+    search,
+    setSearch,
+    {
+      debounce: 300,
+    },
+  );
 
   const filteredData = useTableFilter(searchResults, filters);
-
   const finalSortItems = [...sortItems].sort((a, b) => a.order - b.order);
   const finalData = useTableSort(filteredData, finalSortItems);
 
@@ -60,7 +95,7 @@ export default function Table({
   const paginatedData = finalData.slice(startIndex, startIndex + itemsPerPage);
 
   const filterableColumns = columns.flatMap(
-    (col) => col.filterable ?? [{ label: col.label, variable: col.variable }],
+    (col) => col.filterable ?? [{ label: col.label, key: col.key }],
   );
 
   return (
@@ -84,14 +119,17 @@ export default function Table({
               type="Filter"
               columns={filterableColumns}
               filters={filters}
-              setFilters={setFilters}
+              addFilter={addFilter}
             />
             <TableActionPopover
               type="Sort"
               columns={filterableColumns}
               sortItems={sortItems}
-              setSort={setSort}
+              addSort={addSort}
             />
+            <Button size="sm" className="primary-btn !h-9.5 !rounded-xl">
+              <Plus className="size-4" /> Add
+            </Button>
           </div>
         </div>
         {(sortItems.length >= 1 || filters.length >= 1) && (
@@ -99,9 +137,12 @@ export default function Table({
             {sortItems.length >= 1 && (
               <>
                 <SortItemButton
-                  setSort={setSort}
                   columns={filterableColumns}
                   sortItems={sortItems}
+                  setSort={setSort}
+                  addSort={addSort}
+                  removeSort={removeSort}
+                  updateSort={updateSort}
                 />
                 <Separator orientation="vertical" />
               </>
@@ -111,8 +152,9 @@ export default function Table({
                 <FilterItemButton
                   key={`filter-${i}-btn`}
                   filters={filters}
-                  setFilters={setFilters}
                   filter={filter}
+                  removeFilter={removeFilter}
+                  updateFilter={updateFilter}
                 />
               ))}
 
@@ -135,7 +177,7 @@ export default function Table({
                       undefined,
                       undefined,
                       filters,
-                      setFilters,
+                      addFilter,
                     ),
                   )}
                 </PopoverContent>
@@ -151,7 +193,7 @@ export default function Table({
           style={{ gridTemplateColumns: "10% repeat(2, 1fr) 15%" }}
         >
           {columns.map((column) => (
-            <h4 key={`header-${column.variable}`}>{column.label}</h4>
+            <h4 key={`header-${column.key}`}>{column.label}</h4>
           ))}
 
           <h4>Actions</h4>
@@ -163,9 +205,9 @@ export default function Table({
               <TbMoodConfuzed size={92} strokeWidth={1.8} />
               <p className="font-bold text-2xl">No results</p>
               <p className="text-muted-foreground text-sm leading-[1.2] text-center">
-                Try the following variables:
+                Try the following keys:
                 <br />
-                {searchVariables.join(", ")}
+                {searchKeys.join(", ")}
               </p>
             </div>
           )}
@@ -181,26 +223,38 @@ export default function Table({
                 {columns.map((column) => {
                   if (column.label.toLowerCase().trim() === "name") {
                     return (
-                      <div key={`row-${column.variable}`}>
+                      <div key={`row-${column.key}`}>
                         <h2 className="font-bold text-lg">{data.name}</h2>
                         <h3 className="text-muted-foreground">{data.email}</h3>
                       </div>
                     );
                   } else {
                     return (
-                      <div key={`row-${column.variable}`}>
+                      <div key={`row-${column.key}`}>
                         <h3>{renderColumnData(column, data)}</h3>
                       </div>
                     );
                   }
                 })}
                 <div className="flex items-center gap-3">
-                  <Button size="sm" className="primary-btn">
-                    Edit
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    Archive
-                  </Button>
+                  {finalActions.length <= 2 ? (
+                    <>
+                      {finalActions.map((action, i) => (
+                        <Button
+                          key={`action-${action.label}-btn`}
+                          size="sm"
+                          className={cn(i === 0 && "primary-btn")}
+                          variant={i === 1 ? "outline" : "default"}
+                        >
+                          {action.label}
+                        </Button>
+                      ))}
+                    </>
+                  ) : (
+                    <Button size="sm" variant="ghost">
+                      <Ellipsis className="size-5" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -245,16 +299,16 @@ function TableActionPopover({
   type,
   columns,
   sortItems,
-  setSort,
+  addSort,
   filters,
-  setFilters,
+  addFilter,
 }: {
   type: "Filter" | "Sort";
   columns: ColumnHeader[];
   sortItems?: Sort[];
-  setSort?: React.Dispatch<React.SetStateAction<Sort[]>>;
+  addSort?: (sort: Sort) => void;
   filters?: Filter[];
-  setFilters?: React.Dispatch<React.SetStateAction<Filter[]>>;
+  addFilter?: (filter: Filter) => void;
 }) {
   return (
     <Popover>
@@ -280,9 +334,9 @@ function TableActionPopover({
             type.toLowerCase(),
             column,
             sortItems,
-            setSort,
+            addSort,
             filters,
-            setFilters,
+            addFilter,
           ),
         )}
       </PopoverContent>
@@ -294,47 +348,31 @@ export function renderPopoverLabel(
   type: string,
   column: ColumnHeader,
   sortItems?: Sort[],
-  setSort?: React.Dispatch<React.SetStateAction<Sort[]>>,
+  addSort?: (sort: Sort) => void,
   filters?: Filter[],
-  setFilters?: React.Dispatch<React.SetStateAction<Filter[]>>,
+  addFilter?: (filter: Filter) => void,
 ) {
-  const createButton = (label: string, variable: string) => {
-    const isFilter = type === "filter";
+  const isFilter = type === "filter";
 
+  const createButton = (label: string, key: string) => {
     const isDisabled = isFilter
-      ? filters?.some((f) => f.variable === variable)
-      : sortItems?.some((s) => s.variable === variable);
+      ? filters?.some((f) => f.key === key)
+      : sortItems?.some((s) => s.key === key);
 
     const handleClick = () => {
-      if (isFilter && setFilters) {
-        setFilters((prev) => {
-          const exists = prev.find((f) => f.variable === variable);
-          if (exists) return prev;
-
-          return [
-            ...prev,
-            {
-              label: label.trim(),
-              variable,
-              type: "contains",
-              value: "",
-            },
-          ];
+      if (isFilter && addFilter) {
+        addFilter({
+          label: label.trim(),
+          key,
+          type: "contains",
+          value: "",
         });
-      } else if (!isFilter && setSort) {
-        setSort((prev) => {
-          const exists = prev.find((s) => s.variable === variable);
-          if (exists) return prev;
-
-          return [
-            ...prev,
-            {
-              label: label.trim(),
-              variable,
-              direction: "asc",
-              order: prev.length,
-            },
-          ];
+      } else if (!isFilter && addSort && sortItems) {
+        addSort({
+          label: label.trim(),
+          key,
+          direction: "asc",
+          order: sortItems.length,
         });
       }
     };
@@ -345,7 +383,7 @@ export function renderPopoverLabel(
         size="sm"
         variant="ghost"
         className="justify-start w-full text-sm"
-        disabled={!!isDisabled}
+        disabled={isDisabled}
         onClick={handleClick}
       >
         {label.trim()}
@@ -353,25 +391,23 @@ export function renderPopoverLabel(
     );
   };
 
-  if (Array.isArray(column.variable) && column.label.includes("&")) {
+  if (Array.isArray(column.key) && column.label.includes("&")) {
     const labelParts = column.label.split("&").map((l) => l.trim());
 
     return (
       <React.Fragment key={`wrapper-${column.label}-btn`}>
-        {column.variable.map((variable, i) =>
-          createButton(labelParts[i] ?? variable, variable),
-        )}
+        {column.key.map((key, i) => createButton(labelParts[i] ?? key, key))}
       </React.Fragment>
     );
   }
 
-  return createButton(column.label, column.variable as string);
+  return createButton(column.label, column.key as string);
 }
 
 function renderColumnData(column: ColumnHeader, data: any) {
-  if (Array.isArray(column.variable)) {
-    return `${getValueByPath(data, column.variable[0])}-${getValueByPath(data, column.variable[1])}`;
+  if (Array.isArray(column.key)) {
+    return `${getValueByPath(data, column.key[0])}-${getValueByPath(data, column.key[1])}`;
   }
 
-  return getValueByPath(data, column.variable);
+  return getValueByPath(data, column.key);
 }

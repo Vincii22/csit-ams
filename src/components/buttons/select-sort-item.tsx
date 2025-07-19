@@ -12,32 +12,22 @@ import {
 import { ColumnHeader, Sort } from "@/lib/types";
 
 export function SelectSortItemButton({
-  setSort,
   columns,
   sort,
+  removeSort,
+  updateSort,
 }: {
-  sortItems: Sort[];
-  setSort: React.Dispatch<React.SetStateAction<Sort[]>>;
   columns: ColumnHeader[];
   sort: Sort;
+  removeSort: (key: string) => void;
+  updateSort: (sortKey: string, updater: (prev: Sort) => Sort) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: sort.variable });
+    useSortable({ id: sort.key });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  };
-
-  const updateSort = (updater: (prev: Sort) => Sort) => {
-    setSort((prev) => {
-      const updated = [...prev];
-      const index = updated.findIndex((s) => s.variable === sort.variable);
-      if (index !== -1) {
-        updated[index] = updater(updated[index]);
-      }
-      return updated;
-    });
   };
 
   return (
@@ -51,24 +41,21 @@ export function SelectSortItemButton({
       >
         <Grip className="size-4 text-muted-foreground" />
         <Select
-          defaultValue={sort.variable}
+          defaultValue={sort.key}
           onValueChange={(val) => {
-            const matchedColumn = columns.find((col) => {
-              if (Array.isArray(col.variable)) {
-                return col.variable.includes(val);
-              }
-              return col.variable === val;
-            });
+            const matchedColumn = columns.find((col) =>
+              Array.isArray(col.key) ? col.key.includes(val) : col.key === val,
+            );
 
             const label = matchedColumn?.label.includes("&")
               ? matchedColumn.label
-                  .split("&")
-                  [matchedColumn.variable.indexOf(val)]?.trim()
+                .split("&")
+              [(matchedColumn.key as string[]).indexOf(val)]?.trim()
               : matchedColumn?.label;
 
-            updateSort((prev) => ({
+            updateSort(sort.key, (prev) => ({
               ...prev,
-              variable: val,
+              key: val,
               label: label ?? val,
             }));
           }}
@@ -78,11 +65,12 @@ export function SelectSortItemButton({
           </SelectTrigger>
           <SelectContent>
             {columns.map((col, i) => {
-              if (Array.isArray(col.variable) && col.label.includes("&")) {
+              if (Array.isArray(col.key) && col.label.includes("&")) {
                 const selectLabels = col.label.split("&").map((l) => l.trim());
+
                 return (
                   <React.Fragment key={`wrapper-${i}-btn`}>
-                    {col.variable.map((v, j) => (
+                    {col.key.map((v, j) => (
                       <SelectItem key={v} value={v}>
                         {selectLabels[j] ?? v}
                       </SelectItem>
@@ -92,20 +80,18 @@ export function SelectSortItemButton({
               }
 
               return (
-                <SelectItem
-                  key={col.variable as string}
-                  value={col.variable as string}
-                >
+                <SelectItem key={col.key as string} value={col.key as string}>
                   {col.label}
                 </SelectItem>
               );
             })}
           </SelectContent>
         </Select>
+
         <Select
           defaultValue={sort.direction}
           onValueChange={(val) =>
-            updateSort((prev) => ({
+            updateSort(sort.key, (prev) => ({
               ...prev,
               direction: val as "asc" | "desc",
             }))
@@ -120,11 +106,10 @@ export function SelectSortItemButton({
           </SelectContent>
         </Select>
       </div>
+
       <X
         className="size-4 cursor-pointer text-muted-foreground hover:text-red-400 transition"
-        onClick={() =>
-          setSort((prev) => prev.filter((s) => s.variable !== sort.variable))
-        }
+        onClick={() => removeSort(sort.key)}
       />
     </div>
   );
