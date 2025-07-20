@@ -106,8 +106,8 @@ export function DataTable<T>({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant={"outline"}>
-                <SortAscIcon /> Sort
+              <Button variant={"outline"} className="capitalize">
+                <SortAscIcon /> {activeSortColumn?.id ?? "Sort"}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
