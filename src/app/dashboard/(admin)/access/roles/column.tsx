@@ -16,6 +16,7 @@ export interface StudentDTO {
 export const columns: ColumnDef<StudentDTO>[] = [
   {
     id: "id",
+    accessorKey: "schoolId",
     header: () => <h1 className="font-semibold">ID</h1>,
     cell: ({ row }) => (
       <div className="font-semibold">{row.original.schoolId}</div>
@@ -35,7 +36,8 @@ export const columns: ColumnDef<StudentDTO>[] = [
     },
   },
   {
-    accessorKey: "course & year",
+    id: "Course & Year",
+    accessorKey: "course",
     header: () => <h1 className="font-semibold text-center">Course & Year</h1>,
     cell: ({ row }) => {
       const raw = row.original;
