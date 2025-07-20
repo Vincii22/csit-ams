@@ -29,16 +29,7 @@ export default async function RolePage() {
 
   return (
     <div className="p-5">
-      <DataTable
-        data={students}
-        columns={columns}
-        searchFilter="name"
-        actions={[
-          <Button variant={"outline"}>
-            <SortAscIcon /> Sort
-          </Button>,
-        ]}
-      />
+      <DataTable data={students} columns={columns} searchFilter="name" />
     </div>
   );
 }

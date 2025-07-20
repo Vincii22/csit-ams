@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+  Column,
   ColumnDef,
   ColumnFiltersState,
   flexRender,
@@ -18,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FilterIcon,
+  SortAscIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -63,6 +65,7 @@ export function DataTable<T>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [activeSortColumn, setActiveSortColumn] = React.useState<Column<T>>();
 
   const table = useReactTable({
     data,
@@ -100,6 +103,38 @@ export function DataTable<T>({
           {actions?.map((action, i) => (
             <div key={i}>{action}</div>
           ))}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"outline"}>
+                <SortAscIcon /> Sort
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {table
+                .getAllColumns()
+                .filter((column) => column.id !== "action")
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={activeSortColumn == column}
+                    onClick={() => {
+                      if (activeSortColumn == column) {
+                        setActiveSortColumn(undefined);
+                      } else {
+                        setActiveSortColumn(column);
+                      }
+                    }}
+                    onCheckedChange={(value) => {
+                      column.toggleSorting(!value);
+                    }}
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
