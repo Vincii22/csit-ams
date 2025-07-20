@@ -16,12 +16,14 @@ export interface StudentDTO {
 export const columns: ColumnDef<StudentDTO>[] = [
   {
     accessorKey: "schoolId",
-    header: () => <h1 className="pl-4">ID</h1>,
-    cell: ({ row }) => <div className="pl-4">{row.getValue("schoolId")}</div>,
+    header: () => <h1 className="pl-4 font-semibold">ID</h1>,
+    cell: ({ row }) => (
+      <div className="pl-4 font-semibold">{row.getValue("schoolId")}</div>
+    ),
   },
   {
     accessorKey: "name",
-    header: "Student",
+    header: () => <h1 className="font-semibold">Student</h1>,
     cell: ({ row }) => {
       const raw = row.original;
       return (
@@ -34,8 +36,16 @@ export const columns: ColumnDef<StudentDTO>[] = [
   },
   {
     accessorKey: "course",
-    header: "Course",
-    cell: ({ row }) => <h3>{row.getValue("course")}</h3>,
+    header: () => <h1 className="font-semibold text-center">Course & Year</h1>,
+    cell: ({ row }) => {
+      const raw = row.original;
+
+      return (
+        <h3 className="text-center">
+          {raw.course} - {raw.year}
+        </h3>
+      );
+    },
   },
   {
     id: "action",
