@@ -16,8 +16,8 @@ export interface StudentDTO {
 export const columns: ColumnDef<StudentDTO>[] = [
   {
     accessorKey: "schoolId",
-    header: "ID",
-    cell: ({ row }) => <div>{row.getValue("schoolId")}</div>,
+    header: () => <h1 className="pl-4">ID</h1>,
+    cell: ({ row }) => <div className="pl-4">{row.getValue("schoolId")}</div>,
   },
   {
     accessorKey: "name",
@@ -26,8 +26,8 @@ export const columns: ColumnDef<StudentDTO>[] = [
       const raw = row.original;
       return (
         <div className="grid gap-2 ">
-          <h2 className="font-bold text-lg">{raw.name}</h2>
-          <h3 className="text-muted-foreground">{raw.email}</h3>
+          <h2 className="font-bold">{raw.name}</h2>
+          <h3 className="text-muted-foreground text-sm">{raw.email}</h3>
         </div>
       );
     },
@@ -40,7 +40,7 @@ export const columns: ColumnDef<StudentDTO>[] = [
   {
     id: "action",
     cell: () => (
-      <div className="flex items-center gap-3 justify-end">
+      <div className="flex pr-4 items-center gap-3 justify-end">
         <Button size="sm">Edit</Button>
         <Button size="sm" variant="outline">
           Archive
