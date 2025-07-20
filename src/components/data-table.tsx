@@ -15,7 +15,6 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   FilterIcon,

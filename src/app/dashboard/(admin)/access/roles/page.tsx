@@ -3,8 +3,6 @@
 import { DataTable } from "@/components/data-table";
 import prisma from "@/lib/prisma";
 import { columns, StudentDTO } from "./column";
-import { Button } from "@/components/ui/button";
-import { FilterIcon, SortAscIcon } from "lucide-react";
 
 export default async function RolePage() {
   const students = (await prisma.student
