@@ -9,6 +9,9 @@ export async function fetchStudents(): Promise<User[]> {
     where: {
       role: "STUDENT",
     },
+    orderBy: {
+      verifiedAt: "desc",
+    },
     include: {
       student: {
         include: {
