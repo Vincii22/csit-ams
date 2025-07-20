@@ -47,6 +47,7 @@ const MockData = () => {
     </div>
   );
 };
+
 export default function Table() {
   const [isInputSearchFocused, setIsInputSearchFocused] = useState(false);
 
@@ -97,14 +98,14 @@ export default function Table() {
         {/* data container */}
         <div>
           {Array.from({ length: 8 }, (_, i) => (
-            <>
+            <div key={i}>
               <MockData key={`haha-${i}`} />
               {i < 7 && <Separator />}
-            </>
+            </div>
           ))}
         </div>
       </div>
-      <Pagination>
+      <Pagination className="mt-8">
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious href="#" />
