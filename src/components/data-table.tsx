@@ -36,9 +36,6 @@ import {
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "./ui/pagination";
 
 export type DataTableProps<T> = {
@@ -202,6 +199,10 @@ export function DataTable<T>({
                   </Button>
                 </PaginationItem>
               ))}
+
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
 
               <PaginationItem>
                 <Button
