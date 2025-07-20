@@ -29,6 +29,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { PasswordInput } from "@/app/(auth)/password";
 import { Separator } from "@/components/ui/separator";
+import { addStudentUser } from "../_actions/add.action";
 
 export function AddStudentForm({
   className,
@@ -48,7 +49,9 @@ export function AddStudentForm({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof registerSchema>) {}
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    const { error } = await addStudentUser(values);
+  }
 
   return (
     <Form {...form}>

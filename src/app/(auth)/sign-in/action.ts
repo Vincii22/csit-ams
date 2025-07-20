@@ -13,13 +13,14 @@ type SignInResult =
   | { success: false; error: { message: string } };
 
 export async function signIn(
-  credentials: z.infer<typeof loginSchema>,
+  credentials: z.infer<typeof loginSchema>
 ): Promise<SignInResult> {
   const supabase = await createClient();
 
   const { remember, ...authCredentials } = credentials;
-  const { data, error } =
-    await supabase.auth.signInWithPassword(authCredentials);
+  const { data, error } = await supabase.auth.signInWithPassword(
+    authCredentials
+  );
 
   if (error) {
     return { success: false, error: { message: error.message } };
