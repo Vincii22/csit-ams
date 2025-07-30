@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "./ui/button";
 import { FilterIcon, SortAsc, Plus, Ellipsis } from "lucide-react";
 import {
@@ -29,32 +29,56 @@ import { usePopup } from "@/shared/contexts/popup-context";
 
 type TableProps = {
   tableKey: string;
+  title?: string;
   columns: ColumnHeader[];
   rows: any[];
-  searchKeys: string[];
+  itemsPerPage?: number;
 
+  searchKeys: string[];
+  searchPlaceholder?: string;
+
+  canSearch?: boolean;
+  canFilter?: boolean;
+  canSort?: boolean;
   canAdd?: boolean;
-  addActionPopup?: () => React.ReactNode;
 
   actions?: Action[];
   defaultPopovers?: {
     for: string;
     content: (row: any) => React.ReactNode;
   }[];
-  itemsPerPage?: number;
+  addActionPopup?: () => React.ReactNode;
 };
 
 export default function Table({
   tableKey,
+  title,
   columns,
   rows,
   searchKeys,
+  searchPlaceholder = "Search...",
+  canSearch = true,
+  canFilter = true,
+  canSort = true,
   canAdd = true,
   addActionPopup,
   actions,
   defaultPopovers,
   itemsPerPage = 10,
 }: TableProps) {
+  const [hasIdColumn, setHasIdColumn] = useState(false);
+
+  useEffect(() => {
+    const hasId = columns.some((item) => item.label.trim().toLowerCase() === "id");
+    setHasIdColumn(hasId);
+  }, [columns]);
+
+  const gridStyle: React.CSSProperties = {
+    gridTemplateColumns: hasIdColumn
+      ? `10% repeat(${columns.length}, 1fr) 15%`
+      : `repeat(${columns.length}, 1fr) 15%`,
+  };
+
   const defaultActions: Action[] = [
     { label: "Edit", content: null },
     { label: "Archive", content: null },
@@ -65,9 +89,7 @@ export default function Table({
 
     return base.map((action) => {
       const normalizedLabel = action.label.toLowerCase();
-      const matchedPopover = defaultPopovers?.find(
-        (p) => p.for === normalizedLabel,
-      );
+      const matchedPopover = defaultPopovers?.find((p) => p.for === normalizedLabel);
 
       return {
         ...action,
@@ -95,15 +117,9 @@ export default function Table({
     setCurrentPage,
   } = useTable(tableKey);
 
-  const { filteredData: searchResults } = useSearch(
-    rows,
-    searchKeys,
-    search,
-    setSearch,
-    {
-      debounce: 300,
-    },
-  );
+  const { filteredData: searchResults } = useSearch(rows, searchKeys, search, setSearch, {
+    debounce: 300,
+  });
 
   const filteredData = useTableFilter(searchResults, filters);
   const finalSortItems = [...sortItems].sort((a, b) => a.order - b.order);
@@ -114,38 +130,44 @@ export default function Table({
   const paginatedData = finalData.slice(startIndex, startIndex + itemsPerPage);
 
   const filterableColumns = columns.flatMap(
-    (col) => col.filterable ?? [{ label: col.label, key: col.key }],
+    (col) => col.filterable ?? [{ label: col.label, key: col.key }]
   );
 
   return (
     <div id={tableKey} className="flex flex-col h-full w-full">
       <div className="mb-5">
-        <h1 className="font-bold text-3xl mb-5">Student List</h1>
+        <h1 className="font-bold text-3xl mb-5">{title ? title : ""}</h1>
         <div
           className={cn(
             "flex justify-between items-center gap-3",
-            (sortItems.length >= 1 || filters.length >= 1) && "mb-5",
+            (sortItems.length >= 1 || filters.length >= 1) && "mb-5"
           )}
         >
-          <SearchBar
-            value={search}
-            onChangeAction={setSearch}
-            placeholder="Search students..."
-          />
+          {canSearch && (
+            <SearchBar
+              value={search}
+              onChangeAction={setSearch}
+              placeholder={searchPlaceholder}
+            />
+          )}
 
           <div className="flex items-center gap-2">
-            <TableActionPopover
-              type="Filter"
-              columns={filterableColumns}
-              filters={filters}
-              addFilter={addFilter}
-            />
-            <TableActionPopover
-              type="Sort"
-              columns={filterableColumns}
-              sortItems={sortItems}
-              addSort={addSort}
-            />
+            {canFilter && (
+              <TableActionPopover
+                type="Filter"
+                columns={filterableColumns}
+                filters={filters}
+                addFilter={addFilter}
+              />
+            )}
+            {canSort && (
+              <TableActionPopover
+                type="Sort"
+                columns={filterableColumns}
+                sortItems={sortItems}
+                addSort={addSort}
+              />
+            )}
             {canAdd && (
               <Button
                 size="sm"
@@ -202,8 +224,8 @@ export default function Table({
                       undefined,
                       undefined,
                       filters,
-                      addFilter,
-                    ),
+                      addFilter
+                    )
                   )}
                 </PopoverContent>
               </Popover>
@@ -215,7 +237,7 @@ export default function Table({
       <div className="border border-border rounded-lg">
         <div
           className="grid text-start font-bold uppercase py-2 px-4 border-b border-border bg-muted/25"
-          style={{ gridTemplateColumns: "10% repeat(2, 1fr) 15%" }}
+          style={gridStyle}
         >
           {columns.map((column) => (
             <h4 key={`header-${column.key}`}>{column.label}</h4>
@@ -241,9 +263,9 @@ export default function Table({
               <div
                 className={cn(
                   "grid text-start items-center py-3 px-4",
-                  i < paginatedData.length - 1 && "border-b border-border",
+                  i < paginatedData.length - 1 && "border-b border-border"
                 )}
-                style={{ gridTemplateColumns: "10% repeat(2, 1fr) 15%" }}
+                style={gridStyle}
               >
                 {columns.map((column) => {
                   if (column.label.toLowerCase().trim() === "name") {
@@ -345,11 +367,7 @@ function TableActionPopover({
         )}
         {type}
       </PopoverTrigger>
-      <PopoverContent
-        align="end"
-        sideOffset={7}
-        className="!p-3 flex flex-col w-[10rem]"
-      >
+      <PopoverContent align="end" sideOffset={7} className="!p-3 flex flex-col w-[10rem]">
         <span className="text-muted-foreground text-sm uppercase mb-2.5">
           {type === "Filter" ? "Filter by" : "Sort by"}
         </span>
@@ -361,8 +379,8 @@ function TableActionPopover({
             sortItems,
             addSort,
             filters,
-            addFilter,
-          ),
+            addFilter
+          )
         )}
       </PopoverContent>
     </Popover>
@@ -375,7 +393,7 @@ export function renderPopoverLabel(
   sortItems?: Sort[],
   addSort?: (sort: Sort) => void,
   filters?: Filter[],
-  addFilter?: (filter: Filter) => void,
+  addFilter?: (filter: Filter) => void
 ) {
   const isFilter = type === "filter";
 
@@ -431,7 +449,10 @@ export function renderPopoverLabel(
 
 function renderColumnData(column: ColumnHeader, data: any) {
   if (Array.isArray(column.key)) {
-    return `${getValueByPath(data, column.key[0])}-${getValueByPath(data, column.key[1])}`;
+    return `${getValueByPath(data, column.key[0])}-${getValueByPath(
+      data,
+      column.key[1]
+    )}`;
   }
 
   return getValueByPath(data, column.key);
